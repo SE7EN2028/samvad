@@ -6,93 +6,79 @@ import "../auth.css";
 
 const LoginPage = () => {
     const [showPassword, setShowPassword] = useState(false);
-    const [formData, setFormData] = useState({
-        username: "",
-        password: "",
-    });
+    const [formData, setFormData] = useState({ username: "", password: "" });
     const { login, isLoggingIn } = useAuthStore();
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         login(formData);
     };
 
     return (
-        <div className="auth-container">
-            <div className="glass auth-card">
-                <div className="bg-icon-deco">
-                    <MessageSquare size={160} />
-                </div>
+        <div className="auth-page">
+            <div className="auth-card">
+                <div className="auth-deco" />
+                <div className="auth-deco-2" />
 
                 <div className="auth-header">
-                    <div className="auth-icon-box">
-                        <MessageSquare size={24} />
+                    <div className="auth-logo">
+                        <MessageSquare size={26} />
                     </div>
-                    <h1 className="auth-title">Welcome Back</h1>
-                    <p className="auth-subtitle">Sign in to your account</p>
+                    <h1 className="auth-title">Welcome back</h1>
+                    <p className="auth-subtitle">Sign in to continue to Samvad</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="auth-form">
-                    <div className="form-group">
+                    <div className="form-field">
                         <label className="form-label">Username</label>
-                        <div className="input-wrapper">
-                            <div className="input-icon">
-                                <Mail size={20} />
-                            </div>
+                        <div className="input-wrap">
+                            <div className="input-icon"><Mail size={18} /></div>
                             <input
                                 type="text"
                                 className="auth-input"
-                                placeholder="your username"
+                                placeholder="your_username"
                                 value={formData.username}
                                 onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                                required
                             />
                         </div>
                     </div>
 
-                    <div className="form-group">
+                    <div className="form-field">
                         <label className="form-label">Password</label>
-                        <div className="input-wrapper">
-                            <div className="input-icon">
-                                <Lock size={20} />
-                            </div>
+                        <div className="input-wrap">
+                            <div className="input-icon"><Lock size={18} /></div>
                             <input
                                 type={showPassword ? "text" : "password"}
-                                className="auth-input"
+                                className="auth-input has-toggle"
                                 placeholder="••••••••"
                                 value={formData.password}
                                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                required
                             />
                             <button
                                 type="button"
-                                className="pwd-toggle"
+                                className="toggle-btn"
                                 onClick={() => setShowPassword(!showPassword)}
                             >
-                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                             </button>
                         </div>
                     </div>
 
-                    <button
-                        type="submit"
-                        className="auth-button"
-                        disabled={isLoggingIn}
-                    >
+                    <button type="submit" className="auth-submit" disabled={isLoggingIn}>
                         {isLoggingIn ? (
                             <>
-                                <Loader2 size={20} className="spinner" />
-                                Authenticating...
+                                <Loader2 size={18} className="spin" />
+                                Signing in...
                             </>
-                        ) : (
-                            "Sign In"
-                        )}
+                        ) : "Sign In"}
                     </button>
                 </form>
 
                 <div className="auth-footer">
                     Don&apos;t have an account?{" "}
-                    <Link to="/signup" className="auth-link">
-                        Create account
-                    </Link>
+                    <Link to="/signup">Create one</Link>
                 </div>
             </div>
         </div>

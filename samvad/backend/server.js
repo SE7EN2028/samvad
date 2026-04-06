@@ -2,6 +2,9 @@ import path from "path";
 import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import cors from "cors";
+
+dotenv.config();
 
 import authRoutes from "./routes/auth.routes.js";
 import messageRoutes from "./routes/message.routes.js";
@@ -14,8 +17,10 @@ const PORT = process.env.PORT || 5005;
 
 const __dirname = path.resolve();
 
-dotenv.config();
-
+app.use(cors({
+    origin: ["http://localhost:5173", "http://localhost:5174"],
+    credentials: true,
+}));
 app.use(express.json());
 app.use(cookieParser());
 

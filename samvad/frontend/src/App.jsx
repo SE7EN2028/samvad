@@ -20,9 +20,9 @@ const App = () => {
 
     if (isCheckingAuth && !authUser)
         return (
-            <div className="flex items-center justify-center h-screen">
-                <Loader className="size-10 animate-spin" />
-            </div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+            <Loader style={{ width: 40, height: 40, animation: 'spin 1s linear infinite', color: '#6366f1' }} />
+        </div>
         );
 
     return (
