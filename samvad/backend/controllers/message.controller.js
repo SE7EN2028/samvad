@@ -4,12 +4,12 @@ import { getReceiverSocketId, io } from "../socket/socket.js";
 export const sendMessage = async (req, res) => {
     try {
         const { message } = req.body;
-        const { id: receiverId } = req.params;
+        const { id: roomId } = req.params;
         const senderId = req.user._id;
 
         const newMessage = new Message({
             senderId,
-            receiverId,
+            roomId,
             text: message,
         });
 
@@ -17,10 +17,7 @@ export const sendMessage = async (req, res) => {
             await newMessage.save();
         }
 
-        const receiverSocketId = getReceiverSocketId(receiverId);
-        if (receiverSocketId) {
-            io.to(receiverSocketId).emit("newMessage", newMessage);
-        }
+        io.to(roomId).emit("newMessage", newMessage);
 
         res.status(201).json(newMessage);
     } catch (error) {
@@ -31,15 +28,9 @@ export const sendMessage = async (req, res) => {
 
 export const getMessages = async (req, res) => {
     try {
-        const { id: userToChatId } = req.params;
-        const senderId = req.user._id;
+        const { id: roomId } = req.params;
 
-        const messages = await Message.find({
-            $or: [
-                { senderId: senderId, receiverId: userToChatId },
-                { senderId: userToChatId, receiverId: senderId },
-            ],
-        }).sort({ createdAt: 1 });
+        const messages = await Message.find({ roomId }).sort({ createdAt: 1 });
 
         res.status(200).json(messages);
     } catch (error) {

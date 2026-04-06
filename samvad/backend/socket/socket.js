@@ -12,9 +12,7 @@ const io = new Server(server, {
     },
 });
 
-export const getReceiverSocketId = (receiverId) => {
-    return userSocketMap[receiverId];
-};
+
 
 const userSocketMap = {}; 
 
@@ -25,6 +23,10 @@ io.on("connection", (socket) => {
     if (userId !== "undefined") userSocketMap[userId] = socket.id;
 
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
+
+    socket.on("joinRoom", (roomId) => {
+        socket.join(roomId);
+    });
 
     socket.on("disconnect", () => {
         console.log("user disconnected", socket.id);
