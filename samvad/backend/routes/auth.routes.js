@@ -1,3 +1,4 @@
+import express from "express";
 import { checkAuth, login, logout, signup } from "../controllers/auth.controller.js";
 import { protectRoute } from "../middleware/protectRoute.js";
 

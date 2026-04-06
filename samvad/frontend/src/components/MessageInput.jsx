@@ -38,7 +38,6 @@ const MessageInput = () => {
                 image: imagePreview,
             });
 
-            // Clear form
             setText("");
             setImagePreview(null);
             if (fileInputRef.current) fileInputRef.current.value = "";
@@ -87,14 +86,6 @@ const MessageInput = () => {
                         onChange={handleImageChange}
                     />
 
-                    {/* <button
-            type="button"
-            className={`hidden sm:flex btn btn-circle
-                     ${imagePreview ? "text-primary" : "text-text-muted"}`}
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <Image size={20} />
-          </button> */}
                 </div>
                 <button
                     type="submit"
