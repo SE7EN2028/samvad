@@ -3,6 +3,7 @@ import { useAuthStore } from "../store/useAuthStore";
 import { MessageSquare, User, Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
+import "../auth.css";
 
 const SignupPage = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -32,28 +33,30 @@ const SignupPage = () => {
     };
 
     return (
-        <div className="min-h-screen pt-20 flex items-center justify-center p-6">
-            <div className="glass w-full max-w-md p-8 space-y-8">
-                <div className="text-center">
-                    <div className="flex flex-col items-center gap-2 group">
-                        <div className="size-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                            <MessageSquare className="size-6 text-primary" />
-                        </div>
-                        <h1 className="text-2xl font-bold mt-2">Create Account</h1>
-                        <p className="text-text-muted">Get started with your free account</p>
-                    </div>
+        <div className="auth-container">
+            <div className="glass auth-card" style={{ maxWidth: '500px' }}>
+                <div className="bg-icon-deco">
+                    <MessageSquare size={160} />
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">Full Name</label>
-                        <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <User className="size-5 text-text-muted" />
+                <div className="auth-header">
+                    <div className="auth-icon-box">
+                        <MessageSquare size={24} />
+                    </div>
+                    <h1 className="auth-title">Create Account</h1>
+                    <p className="auth-subtitle">Get started for free</p>
+                </div>
+
+                <form onSubmit={handleSubmit} className="auth-form">
+                    <div className="form-group">
+                        <label className="form-label">Full Name</label>
+                        <div className="input-wrapper">
+                            <div className="input-icon">
+                                <User size={20} />
                             </div>
                             <input
                                 type="text"
-                                className="w-full pl-10 pr-4 py-2 bg-slate-800/50 border border-glass-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                                className="auth-input"
                                 placeholder="John Doe"
                                 value={formData.fullName}
                                 onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
@@ -61,15 +64,15 @@ const SignupPage = () => {
                         </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">Username</label>
-                        <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <Mail className="size-5 text-text-muted" />
+                    <div className="form-group">
+                        <label className="form-label">Username</label>
+                        <div className="input-wrapper">
+                            <div className="input-icon">
+                                <Mail size={20} />
                             </div>
                             <input
                                 type="text"
-                                className="w-full pl-10 pr-4 py-2 bg-slate-800/50 border border-glass-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                                className="auth-input"
                                 placeholder="johndoe"
                                 value={formData.username}
                                 onChange={(e) => setFormData({ ...formData, username: e.target.value })}
@@ -77,42 +80,38 @@ const SignupPage = () => {
                         </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">Password</label>
-                        <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <Lock className="size-5 text-text-muted" />
+                    <div className="form-group">
+                        <label className="form-label">Password</label>
+                        <div className="input-wrapper">
+                            <div className="input-icon">
+                                <Lock size={20} />
                             </div>
                             <input
                                 type={showPassword ? "text" : "password"}
-                                className="w-full pl-10 pr-12 py-2 bg-slate-800/50 border border-glass-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                                className="auth-input"
                                 placeholder="••••••••"
                                 value={formData.password}
                                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                             />
                             <button
                                 type="button"
-                                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                                className="pwd-toggle"
                                 onClick={() => setShowPassword(!showPassword)}
                             >
-                                {showPassword ? (
-                                    <EyeOff className="size-5 text-text-muted" />
-                                ) : (
-                                    <Eye className="size-5 text-text-muted" />
-                                )}
+                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                             </button>
                         </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">Confirm Password</label>
-                        <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <Lock className="size-5 text-text-muted" />
+                    <div className="form-group">
+                        <label className="form-label">Confirm Password</label>
+                        <div className="input-wrapper">
+                            <div className="input-icon">
+                                <Lock size={20} />
                             </div>
                             <input
                                 type={showPassword ? "text" : "password"}
-                                className="w-full pl-10 pr-4 py-2 bg-slate-800/50 border border-glass-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                                className="auth-input"
                                 placeholder="••••••••"
                                 value={formData.confirmPassword}
                                 onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
@@ -122,27 +121,25 @@ const SignupPage = () => {
 
                     <button
                         type="submit"
-                        className="w-full bg-primary hover:bg-primary/90 text-white font-medium py-2 rounded-lg transition-all flex justify-center items-center gap-2"
+                        className="auth-button"
                         disabled={isSigningUp}
                     >
                         {isSigningUp ? (
                             <>
-                                <Loader2 className="size-5 animate-spin" />
-                                Loading...
+                                <Loader2 size={20} className="spinner" />
+                                Creating Account...
                             </>
                         ) : (
-                            "Create Account"
+                            "Sign Up"
                         )}
                     </button>
                 </form>
 
-                <div className="text-center">
-                    <p className="text-text-muted">
-                        Already have an account?{" "}
-                        <Link to="/login" className="text-primary hover:underline">
-                            Log in
-                        </Link>
-                    </p>
+                <div className="auth-footer">
+                    Already have an account?{" "}
+                    <Link to="/login" className="auth-link">
+                        Log in
+                    </Link>
                 </div>
             </div>
         </div>
