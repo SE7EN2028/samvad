@@ -11,7 +11,7 @@ const ChatContainer = () => {
         messages,
         getMessages,
         isMessagesLoading,
-        selectedUser,
+        currentRoomId,
         subscribeToMessages,
         unsubscribeFromMessages,
     } = useChatStore();
@@ -19,12 +19,12 @@ const ChatContainer = () => {
     const messageEndRef = useRef(null);
 
     useEffect(() => {
-        getMessages(selectedUser._id);
-
-        subscribeToMessages();
-
+        if (currentRoomId) {
+            getMessages(currentRoomId);
+            subscribeToMessages();
+        }
         return () => unsubscribeFromMessages();
-    }, [selectedUser._id, getMessages, subscribeToMessages, unsubscribeFromMessages]);
+    }, [currentRoomId, getMessages, subscribeToMessages, unsubscribeFromMessages]);
 
     useEffect(() => {
         if (messageEndRef.current && messages) {
@@ -34,7 +34,7 @@ const ChatContainer = () => {
 
     if (isMessagesLoading) {
         return (
-            <div className="flex-1 flex flex-col overflow-auto">
+            <div className="flex-1 flex flex-col overflow-auto bg-slate-900/40">
                 <ChatHeader />
                 <MessageSkeleton />
                 <MessageInput />
@@ -43,7 +43,7 @@ const ChatContainer = () => {
     }
 
     return (
-        <div className="flex-1 flex flex-col overflow-auto">
+        <div className="flex-1 flex flex-col overflow-auto bg-slate-900/40 relative">
             <ChatHeader />
 
             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
@@ -55,8 +55,8 @@ const ChatContainer = () => {
                         <div
                             className={`max-w-[70%] p-3 rounded-2xl ${
                                 message.senderId === authUser._id
-                                    ? "bg-primary text-white rounded-br-none"
-                                    : "bg-slate-800 text-text-main rounded-bl-none border border-glass-border"
+                                    ? "bg-primary text-white rounded-br-none shadow-lg shadow-primary/20"
+                                    : "bg-slate-800 text-text-main rounded-bl-none border border-glass-border shadow-md"
                             }`}
                         >
                             {message.image && (
