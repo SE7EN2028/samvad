@@ -7,6 +7,7 @@ import Navbar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
+import RoomPage from "./pages/RoomPage";
 
 import { useAuthStore } from "./store/useAuthStore";
 
@@ -31,6 +32,7 @@ const App = () => {
                 <Route path="/" element={authUser ? <HomePage /> : <Navigate to="/login" />} />
                 <Route path="/signup" element={!authUser ? <SignupPage /> : <Navigate to="/" />} />
                 <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
+                <Route path="/room/:roomId" element={authUser ? <RoomPage /> : <Navigate to="/login" />} />
             </Routes>
             <Toaster />
         </div>

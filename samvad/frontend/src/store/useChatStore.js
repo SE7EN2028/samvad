@@ -5,27 +5,13 @@ import { useAuthStore } from "./useAuthStore";
 
 export const useChatStore = create((set, get) => ({
     messages: [],
-    users: [],
-    selectedUser: null,
-    isUsersLoading: false,
+    currentRoomId: null,
     isMessagesLoading: false,
 
-    getUsers: async () => {
-        set({ isUsersLoading: true });
-        try {
-            const res = await axiosInstance.get("/users");
-            set({ users: res.data });
-        } catch (error) {
-            toast.error(error.response.data.message);
-        } finally {
-            set({ isUsersLoading: false });
-        }
-    },
-
-    getMessages: async (userId) => {
+    getMessages: async (roomId) => {
         set({ isMessagesLoading: true });
         try {
-            const res = await axiosInstance.get(`/messages/${userId}`);
+            const res = await axiosInstance.get(`/messages/${roomId}`);
             set({ messages: res.data });
         } catch (error) {
             toast.error(error.response.data.message);
@@ -35,9 +21,9 @@ export const useChatStore = create((set, get) => ({
     },
 
     sendMessage: async (messageData) => {
-        const { selectedUser, messages } = get();
+        const { currentRoomId, messages } = get();
         try {
-            const res = await axiosInstance.post(`/messages/send/${selectedUser._id}`, messageData);
+            const res = await axiosInstance.post(`/messages/send/${currentRoomId}`, messageData);
             set({ messages: [...messages, res.data] });
         } catch (error) {
             toast.error(error.response.data.message);
@@ -45,14 +31,13 @@ export const useChatStore = create((set, get) => ({
     },
 
     subscribeToMessages: () => {
-        const { selectedUser } = get();
-        if (!selectedUser) return;
+        const { currentRoomId } = get();
+        if (!currentRoomId) return;
 
         const socket = useAuthStore.getState().socket;
 
         socket.on("newMessage", (newMessage) => {
-            const isMessageSentBySelectedUser = newMessage.senderId === selectedUser._id;
-            if (!isMessageSentBySelectedUser) return;
+            if (newMessage.roomId !== currentRoomId) return;
 
             set({
                 messages: [...get().messages, newMessage],
@@ -62,8 +47,8 @@ export const useChatStore = create((set, get) => ({
 
     unsubscribeFromMessages: () => {
         const socket = useAuthStore.getState().socket;
-        socket.off("newMessage");
+        if (socket) socket.off("newMessage");
     },
 
-    setSelectedUser: (selectedUser) => set({ selectedUser }),
+    setCurrentRoomId: (roomId) => set({ currentRoomId: roomId }),
 }));
