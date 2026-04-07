@@ -1,4 +1,5 @@
 import Message from "../models/message.model.js";
+import User from "../models/user.model.js";
 import { io } from "../socket/socket.js";
 
 export const sendMessage = async (req, res) => {
@@ -13,13 +14,14 @@ export const sendMessage = async (req, res) => {
             text: message,
         });
 
-        if (newMessage) {
-            await newMessage.save();
-        }
+        await newMessage.save();
 
-        io.to(roomId).emit("newMessage", newMessage);
+        const populated = await Message.findById(newMessage._id)
+            .populate("senderId", "fullName profilePic username");
 
-        res.status(201).json(newMessage);
+        io.to(roomId).emit("newMessage", populated);
+
+        res.status(201).json(populated);
     } catch (error) {
         console.log("Error in sendMessage controller: ", error.message);
         res.status(500).json({ error: "Internal server error" });
@@ -30,7 +32,9 @@ export const getMessages = async (req, res) => {
     try {
         const { id: roomId } = req.params;
 
-        const messages = await Message.find({ roomId }).sort({ createdAt: 1 });
+        const messages = await Message.find({ roomId })
+            .sort({ createdAt: 1 })
+            .populate("senderId", "fullName profilePic username");
 
         res.status(200).json(messages);
     } catch (error) {
