@@ -81,6 +81,10 @@ const MessageInput = () => {
                     type="submit"
                     className="btn-send"
                     disabled={!text.trim() && !imagePreview}
+                    style={{
+                        background: "var(--room-bubble, linear-gradient(135deg, var(--primary), var(--primary-dark)))",
+                        boxShadow: "0 4px 12px var(--room-bubble-shadow, rgba(99,102,241,0.3))",
+                    }}
                 >
                     <Send size={18} />
                 </button>

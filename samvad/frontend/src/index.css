@@ -500,6 +500,18 @@ body {
   display: flex;
   flex-direction: column;
   padding-top: 64px;
+  position: relative;
+}
+
+.room-bg-glow {
+  position: absolute;
+  top: 64px;
+  left: 0;
+  right: 0;
+  height: 300px;
+  pointer-events: none;
+  z-index: 0;
+  transition: background 0.6s ease;
 }
 
 .room-container {
@@ -508,6 +520,8 @@ body {
   padding: 16px;
   gap: 0;
   min-height: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .room-chat-wrapper {
@@ -615,12 +629,14 @@ body {
 }
 
 .msg-bubble {
-  max-width: 68%;
   padding: 10px 14px;
   border-radius: 16px;
   font-size: 14px;
   line-height: 1.5;
   position: relative;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  min-width: 0;
 }
 
 .msg-bubble.own {

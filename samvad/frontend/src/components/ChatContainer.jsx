@@ -83,7 +83,13 @@ const ChatContainer = () => {
                                         <span className="msg-sender-name">{senderName}</span>
                                     )}
 
-                                    <div className={`msg-bubble ${isOwn ? "own" : "other"}`}>
+                                    <div
+                                        className={`msg-bubble ${isOwn ? "own" : "other"}`}
+                                        style={isOwn ? {
+                                            background: "var(--room-bubble, linear-gradient(135deg, var(--primary), var(--primary-dark)))",
+                                            boxShadow: "0 4px 16px var(--room-bubble-shadow, rgba(99,102,241,0.25))",
+                                        } : {}}
+                                    >
                                         {message.image && (
                                             <img
                                                 src={message.image}
