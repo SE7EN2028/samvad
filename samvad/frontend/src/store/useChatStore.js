@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { toast } from "react-hot-toast";
 import { axiosInstance } from "../lib/axios";
 import { useAuthStore } from "./useAuthStore";
+import { launchActionAnimation } from "../lib/confetti";
 
 export const useChatStore = create((set, get) => ({
     messages: [],
@@ -53,6 +54,24 @@ export const useChatStore = create((set, get) => ({
         socket.on("userStopTyping", ({ socketId }) => {
             set({ typingUsers: get().typingUsers.filter((u) => u.socketId !== socketId) });
         });
+
+        socket.on("roomAction", ({ name, action }) => {
+            console.log("CELEBRATE EVENT RECEIVED FOR:", name, action);
+            launchActionAnimation(action);
+            const toastEl = document.createElement("div");
+            toastEl.className = "celebrate-toast";
+            
+            const messages = {
+                celebrate: `🎊 ${name} threw a party!`,
+                laugh: `😂 ${name} is dying of laughter!`,
+                angry: `😡 ${name} is furious!`,
+                surprised: `😮 ${name} is shook!`
+            };
+            
+            toastEl.innerText = messages[action] || `${name} sent an action`;
+            document.body.appendChild(toastEl);
+            setTimeout(() => toastEl.remove(), 3000);
+        });
     },
 
     unsubscribeFromMessages: () => {
@@ -61,6 +80,7 @@ export const useChatStore = create((set, get) => ({
             socket.off("newMessage");
             socket.off("userTyping");
             socket.off("userStopTyping");
+            socket.off("roomAction");
         }
         set({ typingUsers: [] });
     },

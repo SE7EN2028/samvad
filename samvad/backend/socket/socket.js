@@ -37,6 +37,11 @@ io.on("connection", (socket) => {
         socket.to(roomId).emit("userStopTyping", { socketId: socket.id });
     });
 
+    socket.on("roomAction", ({ roomId, name, action }) => {
+        console.log("Backend received roomAction", action, "from", name, "for room", roomId);
+        io.in(roomId).emit("roomAction", { name, action });
+    });
+
     socket.on("disconnect", () => {
         console.log("user disconnected", socket.id);
         delete userSocketMap[userId];
