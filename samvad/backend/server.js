@@ -14,8 +14,9 @@ import connectDB from "./utils/db.js";
 import { app, server } from "./socket/socket.js";
 
 const PORT = process.env.PORT || 5005;
-
-const __dirname = path.resolve();
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 app.use(cors({
     origin: ["http://localhost:5173", "http://localhost:5174"],
@@ -28,6 +29,14 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/users", userRoutes);
+
+if (process.env.NODE_ENV === "production") {
+    app.use(express.static(path.join(__dirname, "../frontend/dist")));
+
+    app.get("*", (req, res) => {
+        res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+    });
+}
 
 server.listen(PORT, () => {
     connectDB();
