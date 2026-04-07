@@ -1,27 +1,35 @@
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
-import { LogOut, MessageSquare, User, Settings } from "lucide-react";
+import { LogOut, MessageSquare } from "lucide-react";
 
 const Navbar = () => {
     const { logout, authUser } = useAuthStore();
 
     return (
-        <header className="glass fixed w-full top-0 z-40 px-4 h-16 flex items-center justify-between">
-            <div className="flex items-center gap-8">
-                <Link to="/" className="flex items-center gap-2.5 hover:opacity-80 transition-all">
-                    <div className="size-9 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <MessageSquare className="w-5 h-5 text-primary" />
-                    </div>
-                    <h1 className="text-lg font-bold">Samvad</h1>
-                </Link>
-            </div>
+        <header className="navbar">
+            <Link to="/" className="navbar-brand">
+                <div className="navbar-logo">
+                    <MessageSquare size={18} />
+                </div>
+                <span className="navbar-title">Samvad</span>
+            </Link>
 
-            <div className="flex items-center gap-4">
+            <div className="navbar-actions">
                 {authUser && (
                     <>
-                        <button className="flex gap-2 items-center" onClick={logout}>
-                            <LogOut className="size-5" />
-                            <span className="hidden sm:inline">Logout</span>
+                        <div className="navbar-user">
+                            <img
+                                src={authUser.profilePic || `https://avatar.iran.liara.run/public/boy?username=${authUser.username}`}
+                                alt={authUser.fullName}
+                                className="navbar-avatar"
+                            />
+                            <span style={{ fontSize: '13px', color: 'var(--text-subtle)' }}>
+                                {authUser.fullName}
+                            </span>
+                        </div>
+                        <button className="btn-logout" onClick={logout}>
+                            <LogOut size={14} />
+                            <span>Logout</span>
                         </button>
                     </>
                 )}

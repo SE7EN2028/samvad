@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { useChatStore } from "../store/useChatStore";
-import { Image, Send, X } from "lucide-react";
+import { Send, X } from "lucide-react";
 import toast from "react-hot-toast";
 
 const MessageInput = () => {
@@ -15,11 +15,8 @@ const MessageInput = () => {
             toast.error("Please select an image file");
             return;
         }
-
         const reader = new FileReader();
-        reader.onloadend = () => {
-            setImagePreview(reader.result);
-        };
+        reader.onloadend = () => setImagePreview(reader.result);
         reader.readAsDataURL(file);
     };
 
@@ -33,11 +30,7 @@ const MessageInput = () => {
         if (!text.trim() && !imagePreview) return;
 
         try {
-            await sendMessage({
-                message: text.trim(),
-                image: imagePreview,
-            });
-
+            await sendMessage({ message: text.trim(), image: imagePreview });
             setText("");
             setImagePreview(null);
             if (fileInputRef.current) fileInputRef.current.value = "";
@@ -46,54 +39,50 @@ const MessageInput = () => {
         }
     };
 
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            handleSendMessage(e);
+        }
+    };
+
     return (
-        <div className="p-4 w-full">
+        <div className="chat-input-bar">
             {imagePreview && (
-                <div className="mb-3 flex items-center gap-2">
-                    <div className="relative">
-                        <img
-                            src={imagePreview}
-                            alt="Preview"
-                            className="w-20 h-20 object-cover rounded-lg border border-glass-border"
-                        />
-                        <button
-                            onClick={removeImage}
-                            className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-slate-800
-              flex items-center justify-center"
-                            type="button"
-                        >
-                            <X className="size-3" />
+                <div className="img-preview-wrap">
+                    <div className="img-preview-thumb">
+                        <img src={imagePreview} alt="Preview" />
+                        <button className="img-preview-remove" onClick={removeImage} type="button">
+                            <X size={9} />
                         </button>
                     </div>
                 </div>
             )}
 
-            <form onSubmit={handleSendMessage} className="flex items-center gap-2">
-                <div className="flex-1 flex gap-2">
-                    <input
-                        type="text"
-                        className="w-full bg-slate-800/50 border border-glass-border rounded-lg px-4 py-2 outline-none
-                        focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                        placeholder="Type a message..."
-                        value={text}
-                        onChange={(e) => setText(e.target.value)}
-                    />
-                    <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        ref={fileInputRef}
-                        onChange={handleImageChange}
-                    />
+            <form className="chat-input-form" onSubmit={handleSendMessage}>
+                <input
+                    type="file"
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    ref={fileInputRef}
+                    onChange={handleImageChange}
+                />
 
-                </div>
+                <input
+                    type="text"
+                    className="chat-input-field"
+                    placeholder="Type a message..."
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                />
+
                 <button
                     type="submit"
-                    className="size-10 bg-primary rounded-lg flex items-center justify-center
-                    hover:bg-primary/90 transition-all disabled:opacity-50"
+                    className="btn-send"
                     disabled={!text.trim() && !imagePreview}
                 >
-                    <Send size={22} className="text-white" />
+                    <Send size={18} />
                 </button>
             </form>
         </div>

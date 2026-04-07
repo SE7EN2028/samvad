@@ -15,9 +15,9 @@ const RoomPage = () => {
             navigate("/");
             return;
         }
-        
+
         setCurrentRoomId(roomId);
-        
+
         if (socket) {
             socket.emit("joinRoom", roomId);
         }
@@ -28,9 +28,9 @@ const RoomPage = () => {
     }, [roomId, navigate, setCurrentRoomId, socket]);
 
     return (
-        <div className="h-screen bg-transparent pt-20">
-            <div className="flex items-center justify-center px-4 h-full">
-                <div className="glass w-full max-w-6xl h-[calc(100vh-8rem)] flex overflow-hidden shadow-2xl shadow-black/50">
+        <div className="room-page">
+            <div className="room-container">
+                <div className="room-chat-wrapper">
                     <ChatContainer />
                 </div>
             </div>
