@@ -106,14 +106,14 @@ const ChatContainer = () => {
                                             />
                                         )}
                                         {message.text && <p>{message.text}</p>}
-                                        <span className="msg-time">
-                                            {new Date(message.createdAt).toLocaleTimeString([], {
-                                                hour: "2-digit",
-                                                minute: "2-digit",
-                                            })}
-                                        </span>
                                     </div>
                                 </div>
+                                <span className="msg-time-outer">
+                                    {new Date(message.createdAt).toLocaleTimeString([], {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                    })}
+                                </span>
                             </div>
                         );
                     })
