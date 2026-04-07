@@ -4,6 +4,7 @@ import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuthStore";
 import ChatContainer from "../components/ChatContainer";
 import { getRoomVibe } from "../lib/roomVibe";
+import toast from "react-hot-toast";
 
 const RoomPage = () => {
     const { roomId } = useParams();
@@ -19,7 +20,10 @@ const RoomPage = () => {
             return;
         }
         setCurrentRoomId(roomId);
-        if (socket) socket.emit("joinRoom", roomId);
+        if (socket) {
+            socket.emit("joinRoom", roomId);
+            toast.success(`Joined room: ${roomId}`, { id: "join-room" });
+        }
         return () => setCurrentRoomId(null);
     }, [roomId, navigate, setCurrentRoomId, socket]);
 

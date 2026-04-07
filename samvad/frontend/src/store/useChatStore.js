@@ -41,7 +41,9 @@ export const useChatStore = create((set, get) => ({
 
         socket.on("newMessage", (newMessage) => {
             if (newMessage.roomId !== currentRoomId) return;
-            set({ messages: [...get().messages, newMessage] });
+            const currentMessages = get().messages;
+            if (currentMessages.find((m) => m._id === newMessage._id)) return; // Prevent double-add for sender
+            set({ messages: [...currentMessages, newMessage] });
         });
 
         socket.on("userTyping", ({ name, socketId }) => {

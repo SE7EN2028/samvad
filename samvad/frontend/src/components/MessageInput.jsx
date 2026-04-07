@@ -207,8 +207,8 @@ const MessageInput = () => {
         }
 
         if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            handleSendMessage();
+            // No need to call handleSendMessage here, 
+            // the form onSubmit will handle the standard Enter key behavior.
         }
     };
 

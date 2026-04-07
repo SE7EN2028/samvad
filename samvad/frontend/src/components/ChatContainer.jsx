@@ -66,7 +66,9 @@ const ChatContainer = () => {
                         const isOwn = message.senderId?._id === authUser._id || message.senderId === authUser._id;
                         const sender = message.senderId;
                         const senderName = sender?.fullName || "Unknown";
-                        const senderPic = sender?.profilePic || `/account.png`;
+                        const senderPic = (sender?.profilePic && sender.profilePic.trim() !== "") 
+                            ? sender.profilePic 
+                            : "/account.png";
 
                         return (
                             <div
