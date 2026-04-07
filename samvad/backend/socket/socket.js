@@ -29,6 +29,14 @@ io.on("connection", (socket) => {
         socket.join(roomId);
     });
 
+    socket.on("typing", ({ roomId, name }) => {
+        socket.to(roomId).emit("userTyping", { name, socketId: socket.id });
+    });
+
+    socket.on("stopTyping", ({ roomId }) => {
+        socket.to(roomId).emit("userStopTyping", { socketId: socket.id });
+    });
+
     socket.on("disconnect", () => {
         console.log("user disconnected", socket.id);
         delete userSocketMap[userId];

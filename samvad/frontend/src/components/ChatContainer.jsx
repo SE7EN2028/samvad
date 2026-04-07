@@ -13,6 +13,7 @@ const ChatContainer = () => {
         currentRoomId,
         subscribeToMessages,
         unsubscribeFromMessages,
+        typingUsers,
     } = useChatStore();
     const { authUser } = useAuthStore();
     const messageEndRef = useRef(null);
@@ -112,6 +113,20 @@ const ChatContainer = () => {
                 )}
                 <div ref={messageEndRef} />
             </div>
+
+            {typingUsers.length > 0 && (
+                <div className="typing-indicator">
+                    <div className="typing-dots">
+                        <span /><span /><span />
+                    </div>
+                    <span className="typing-label">
+                        {typingUsers.length === 1
+                            ? `${typingUsers[0].name} is typing`
+                            : `${typingUsers.map((u) => u.name).join(", ")} are typing`
+                        }
+                    </span>
+                </div>
+            )}
 
             <MessageInput />
         </div>

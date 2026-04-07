@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { useChatStore } from "../store/useChatStore";
+import { useAuthStore } from "../store/useAuthStore";
 import { Send, X } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -7,7 +8,24 @@ const MessageInput = () => {
     const [text, setText] = useState("");
     const [imagePreview, setImagePreview] = useState(null);
     const fileInputRef = useRef(null);
-    const { sendMessage } = useChatStore();
+    const typingTimerRef = useRef(null);
+    const isTypingRef = useRef(false);
+
+    const { sendMessage, currentRoomId } = useChatStore();
+    const { authUser, socket } = useAuthStore();
+
+    const emitTyping = () => {
+        if (!socket || !currentRoomId) return;
+        if (!isTypingRef.current) {
+            isTypingRef.current = true;
+            socket.emit("typing", { roomId: currentRoomId, name: authUser?.fullName || "Someone" });
+        }
+        clearTimeout(typingTimerRef.current);
+        typingTimerRef.current = setTimeout(() => {
+            isTypingRef.current = false;
+            socket.emit("stopTyping", { roomId: currentRoomId });
+        }, 2000);
+    };
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -28,6 +46,10 @@ const MessageInput = () => {
     const handleSendMessage = async (e) => {
         e.preventDefault();
         if (!text.trim() && !imagePreview) return;
+
+        clearTimeout(typingTimerRef.current);
+        isTypingRef.current = false;
+        if (socket && currentRoomId) socket.emit("stopTyping", { roomId: currentRoomId });
 
         try {
             await sendMessage({ message: text.trim(), image: imagePreview });
@@ -63,7 +85,7 @@ const MessageInput = () => {
                 <input
                     type="file"
                     accept="image/*"
-                    style={{ display: 'none' }}
+                    style={{ display: "none" }}
                     ref={fileInputRef}
                     onChange={handleImageChange}
                 />
@@ -73,7 +95,10 @@ const MessageInput = () => {
                     className="chat-input-field"
                     placeholder="Type a message..."
                     value={text}
-                    onChange={(e) => setText(e.target.value)}
+                    onChange={(e) => {
+                        setText(e.target.value);
+                        emitTyping();
+                    }}
                     onKeyDown={handleKeyDown}
                 />
 
