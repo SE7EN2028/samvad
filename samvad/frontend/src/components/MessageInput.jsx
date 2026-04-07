@@ -48,11 +48,11 @@ const MessageInput = () => {
     useEffect(() => {
         return () => {
             if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
-            if (mediaRecorderRef.current && isRecording) {
+            if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
                 mediaRecorderRef.current.stream.getTracks().forEach(t => t.stop());
             }
         };
-    }, [isRecording]);
+    }, []);
 
     const emitTyping = () => {
         if (!socket || !currentRoomId) return;
