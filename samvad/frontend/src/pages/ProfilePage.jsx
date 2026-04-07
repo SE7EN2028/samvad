@@ -96,7 +96,7 @@ const ProfilePage = () => {
                 <div className="profile-avatar-section">
                     <div className="profile-avatar-wrap">
                         <img
-                            src={avatarPreview || `https://avatar.iran.liara.run/public/boy?username=${authUser?.username}`}
+                            src={avatarPreview || `/account.png`}
                             alt="Profile"
                             className="profile-avatar"
                         />

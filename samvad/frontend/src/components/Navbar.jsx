@@ -19,7 +19,7 @@ const Navbar = () => {
                     <>
                         <Link to="/profile" className="navbar-profile-link">
                             <img
-                                src={authUser.profilePic || `https://avatar.iran.liara.run/public/boy?username=${authUser.username}`}
+                                src={authUser.profilePic || `/account.png`}
                                 alt={authUser.fullName}
                                 className="navbar-avatar"
                             />
