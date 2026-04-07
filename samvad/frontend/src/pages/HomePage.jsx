@@ -56,20 +56,40 @@ const HomePage = () => {
                     </button>
 
                     {generatedId && (
-                        <div className="room-link-box" style={{ marginTop: '14px' }}>
-                            <p className="room-link-label">Your Room Link</p>
-                            <div className="room-link-row">
-                                <div className="room-link-text">
-                                    {window.location.origin}/room/{generatedId}
+                        <div className="room-link-box" style={{ marginTop: '14px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            <div>
+                                <p className="room-link-label">Room ID</p>
+                                <div className="room-link-row">
+                                    <div className="room-link-text">{generatedId}</div>
+                                    <button 
+                                        className="btn-icon" 
+                                        onClick={() => {
+                                            navigator.clipboard.writeText(generatedId);
+                                            toast.success("Room ID copied!");
+                                        }} 
+                                        type="button"
+                                    >
+                                        <Copy size={16} />
+                                    </button>
                                 </div>
-                                <button className="btn-icon" onClick={copyToClipboard} title="Copy link">
-                                    {copied
-                                        ? <Check size={16} style={{ color: 'var(--success)' }} />
-                                        : <Copy size={16} />
-                                    }
-                                </button>
                             </div>
-                            <button className="btn-ghost-primary" onClick={handleJoinRoom}>
+                            
+                            <div>
+                                <p className="room-link-label">Share Link</p>
+                                <div className="room-link-row">
+                                    <div className="room-link-text">
+                                        {window.location.origin}/room/{generatedId}
+                                    </div>
+                                    <button className="btn-icon" onClick={copyToClipboard} type="button">
+                                        {copied
+                                            ? <Check size={16} style={{ color: 'var(--success)' }} />
+                                            : <Copy size={16} />
+                                        }
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button className="btn-ghost-primary" onClick={handleJoinRoom} type="button" style={{ marginTop: '4px' }}>
                                 Enter Created Room
                             </button>
                         </div>
