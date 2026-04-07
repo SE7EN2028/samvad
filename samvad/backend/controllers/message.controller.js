@@ -4,7 +4,7 @@ import { io } from "../socket/socket.js";
 
 export const sendMessage = async (req, res) => {
     try {
-        const { message } = req.body;
+        const { message, image, audio } = req.body;
         const { id: roomId } = req.params;
         const senderId = req.user._id;
 
@@ -12,6 +12,8 @@ export const sendMessage = async (req, res) => {
             senderId,
             roomId,
             text: message,
+            image,
+            audio,
         });
 
         await newMessage.save();

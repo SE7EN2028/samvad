@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuthStore";
-import { Send, X, Zap } from "lucide-react";
+import { Send, X, Zap, Mic, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 
 const COMMANDS = [
@@ -17,9 +17,17 @@ const MessageInput = () => {
     const [showPalette, setShowPalette] = useState(false);
     const [paletteIndex, setPaletteIndex] = useState(0);
 
+    const [isRecording, setIsRecording] = useState(false);
+    const [recordingTime, setRecordingTime] = useState(0);
+
     const fileInputRef = useRef(null);
     const typingTimerRef = useRef(null);
     const isTypingRef = useRef(false);
+
+    const mediaRecorderRef = useRef(null);
+    const audioChunksRef = useRef([]);
+    const timerIntervalRef = useRef(null);
+    const isCancelledRef = useRef(false);
 
     const { sendMessage, currentRoomId } = useChatStore();
     const { authUser, socket } = useAuthStore();
@@ -36,6 +44,15 @@ const MessageInput = () => {
         }
         setPaletteIndex(0);
     }, [text]);
+
+    useEffect(() => {
+        return () => {
+            if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
+            if (mediaRecorderRef.current && isRecording) {
+                mediaRecorderRef.current.stream.getTracks().forEach(t => t.stop());
+            }
+        };
+    }, [isRecording]);
 
     const emitTyping = () => {
         if (!socket || !currentRoomId) return;
@@ -71,6 +88,66 @@ const MessageInput = () => {
         if (fileInputRef.current) fileInputRef.current.value = "";
     };
 
+    const startRecording = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const mediaRecorder = new MediaRecorder(stream);
+            mediaRecorderRef.current = mediaRecorder;
+            audioChunksRef.current = [];
+            isCancelledRef.current = false;
+
+            mediaRecorder.ondataavailable = (e) => {
+                if (e.data.size > 0) audioChunksRef.current.push(e.data);
+            };
+
+            mediaRecorder.onstop = () => {
+                stream.getTracks().forEach(track => track.stop());
+                if (isCancelledRef.current) return;
+                
+                const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+                const reader = new FileReader();
+                reader.readAsDataURL(audioBlob);
+                reader.onloadend = () => {
+                    const base64Audio = reader.result;
+                    sendMessage({ message: "", audio: base64Audio });
+                };
+            };
+
+            mediaRecorder.start();
+            setIsRecording(true);
+            setRecordingTime(0);
+            timerIntervalRef.current = setInterval(() => {
+                setRecordingTime(prev => prev + 1);
+            }, 1000);
+
+            // Stop typing indicator when recording voice
+            clearTimeout(typingTimerRef.current);
+            isTypingRef.current = false;
+            if (socket && currentRoomId) socket.emit("stopTyping", { roomId: currentRoomId });
+
+        } catch (err) {
+            toast.error("Microphone access denied or unavailable");
+            console.error(err);
+        }
+    };
+
+    const sendRecording = () => {
+        if (mediaRecorderRef.current && isRecording) {
+            mediaRecorderRef.current.stop();
+            setIsRecording(false);
+            clearInterval(timerIntervalRef.current);
+        }
+    };
+
+    const cancelRecording = () => {
+        if (mediaRecorderRef.current && isRecording) {
+            isCancelledRef.current = true;
+            mediaRecorderRef.current.stop();
+            setIsRecording(false);
+            clearInterval(timerIntervalRef.current);
+        }
+    };
+
     const executeCommand = (cmd) => {
         if (socket && currentRoomId) {
             socket.emit("roomAction", { roomId: currentRoomId, name: authUser?.fullName || "Someone", action: cmd.action });
@@ -85,7 +162,6 @@ const MessageInput = () => {
         let messageText = text.trim();
         if (!messageText && !imagePreview) return;
 
-        // Check for manual exact typed command bypass
         const matchCmd = COMMANDS.find(c => c.name === messageText);
         if (matchCmd) {
             executeCommand(matchCmd);
@@ -107,6 +183,7 @@ const MessageInput = () => {
     };
 
     const handleKeyDown = (e) => {
+        if (isRecording) return;
         if (showPalette && filteredCommands.length > 0) {
             if (e.key === "ArrowDown") {
                 e.preventDefault();
@@ -135,9 +212,17 @@ const MessageInput = () => {
         }
     };
 
+    const formatTime = (timeInSeconds) => {
+        const m = Math.floor(timeInSeconds / 60);
+        const s = timeInSeconds % 60;
+        return `${m}:${s.toString().padStart(2, '0')}`;
+    };
+
+    const canSendText = text.trim() || imagePreview || text.startsWith("/");
+
     return (
         <div className="chat-input-bar" style={{ position: "relative" }}>
-            {showPalette && filteredCommands.length > 0 && (
+            {showPalette && filteredCommands.length > 0 && !isRecording && (
                 <div className="cmd-palette">
                     <div className="cmd-palette-header">
                         <Zap size={10} style={{ display: 'inline', marginRight: '4px', verticalAlign: 'text-top' }} /> 
@@ -157,7 +242,7 @@ const MessageInput = () => {
                 </div>
             )}
 
-            {imagePreview && (
+            {imagePreview && !isRecording && (
                 <div className="img-preview-wrap">
                     <div className="img-preview-thumb">
                         <img src={imagePreview} alt="Preview" />
@@ -177,27 +262,67 @@ const MessageInput = () => {
                     onChange={handleImageChange}
                 />
 
-                <input
-                    type="text"
-                    className="chat-input-field"
-                    placeholder="Type a message or / for commands..."
-                    value={text}
-                    onChange={handleTextChange}
-                    onKeyDown={handleKeyDown}
-                    autoComplete="off"
-                />
+                {isRecording ? (
+                    <div className="recording-view">
+                        <div className="recording-pulse" />
+                        <span className="recording-timer">{formatTime(recordingTime)}</span>
+                        
+                        <div style={{ marginLeft: "auto", display: "flex", gap: "8px" }}>
+                            <button
+                                type="button"
+                                className="btn-mic-cancel"
+                                onClick={cancelRecording}
+                                title="Cancel"
+                            >
+                                <Trash2 size={16} />
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    <input
+                        type="text"
+                        className="chat-input-field"
+                        placeholder="Type a message or / for commands..."
+                        value={text}
+                        onChange={handleTextChange}
+                        onKeyDown={handleKeyDown}
+                        autoComplete="off"
+                    />
+                )}
 
-                <button
-                    type="submit"
-                    className="btn-send"
-                    disabled={!text.trim() && !imagePreview && !text.startsWith("/")}
-                    style={{
-                        background: "var(--room-bubble, linear-gradient(135deg, var(--primary), var(--primary-dark)))",
-                        boxShadow: "0 4px 12px var(--room-bubble-shadow, rgba(99,102,241,0.3))",
-                    }}
-                >
-                    <Send size={18} />
-                </button>
+                {isRecording ? (
+                    <button
+                        type="button"
+                        className="btn-send btn-send-audio"
+                        onClick={sendRecording}
+                        style={{
+                            background: "var(--room-bubble, linear-gradient(135deg, var(--primary), var(--primary-dark)))",
+                            boxShadow: "0 4px 12px var(--room-bubble-shadow, rgba(99,102,241,0.3))",
+                        }}
+                    >
+                        <Send size={18} />
+                    </button>
+                ) : canSendText ? (
+                    <button
+                        type="submit"
+                        className="btn-send"
+                        style={{
+                            background: "var(--room-bubble, linear-gradient(135deg, var(--primary), var(--primary-dark)))",
+                            boxShadow: "0 4px 12px var(--room-bubble-shadow, rgba(99,102,241,0.3))",
+                        }}
+                    >
+                        <Send size={18} />
+                    </button>
+                ) : (
+                    <button
+                        type="button"
+                        className="btn-mic"
+                        onClick={startRecording}
+                        title="Record a voice note"
+                    >
+                        <Mic size={18} />
+                    </button>
+                )}
             </form>
         </div>
     );

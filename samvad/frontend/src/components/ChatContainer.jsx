@@ -98,6 +98,13 @@ const ChatContainer = () => {
                                                 className="msg-image"
                                             />
                                         )}
+                                        {message.audio && (
+                                            <audio
+                                                controls
+                                                src={message.audio}
+                                                className="msg-audio"
+                                            />
+                                        )}
                                         {message.text && <p>{message.text}</p>}
                                         <span className="msg-time">
                                             {new Date(message.createdAt).toLocaleTimeString([], {
