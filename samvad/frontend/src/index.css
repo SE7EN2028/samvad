@@ -1319,3 +1319,51 @@ body {
   75%  { opacity: 1; }
   100% { opacity: 0; transform: translateX(-50%) translateY(-6px); }
 }
+
+/* Chat Enhancement Styles */
+.msg-bubble:hover .msg-actions {
+  opacity: 1 !important;
+}
+
+.btn-icon-small {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.1);
+  border: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-icon-small:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.btn-icon-small.primary {
+  background: var(--primary);
+}
+
+.btn-icon-small.primary:hover {
+  background: var(--primary-dark);
+}
+
+.edit-textarea {
+  font-family: inherit;
+  width: 100%;
+  min-height: 60px;
+  outline: none;
+}
+
+.edit-textarea:focus {
+  border-color: rgba(255,255,255,0.4) !important;
+}
+
+.msg-edited-badge {
+  pointer-events: none;
+  user-select: none;
+}
+

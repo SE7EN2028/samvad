@@ -20,6 +20,10 @@ const messageSchema = new mongoose.Schema(
         audio: {
             type: String,
         },
+        isEdited: {
+            type: Boolean,
+            default: false,
+        },
     },
     { timestamps: true }
 );

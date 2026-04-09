@@ -5,7 +5,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 const ChatHeader = () => {
-    const { currentRoomId } = useChatStore();
+    const { currentRoomId, roomUsers } = useChatStore();
     const navigate = useNavigate();
     const [idCopied, setIdCopied] = useState(false);
     const [linkCopied, setLinkCopied] = useState(false);
@@ -51,7 +51,7 @@ const ChatHeader = () => {
                     >
                         <span className="live-indicator" style={{ background: "var(--room-primary, var(--success))" }} />
                         <Users size={11} />
-                        Live session
+                        {roomUsers.length} {roomUsers.length === 1 ? 'member' : 'members'} active
                     </div>
                 </div>
             </div>

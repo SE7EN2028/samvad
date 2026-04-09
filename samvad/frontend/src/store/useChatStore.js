@@ -9,6 +9,7 @@ export const useChatStore = create((set, get) => ({
     currentRoomId: null,
     isMessagesLoading: false,
     typingUsers: [],
+    roomUsers: [],
 
     getMessages: async (roomId) => {
         set({ isMessagesLoading: true });
@@ -32,6 +33,28 @@ export const useChatStore = create((set, get) => ({
         }
     },
 
+    deleteMessage: async (messageId) => {
+        const { messages } = get();
+        try {
+            await axiosInstance.delete(`/messages/delete/${messageId}`);
+            set({ messages: messages.filter((m) => m._id !== messageId) });
+        } catch (error) {
+            toast.error(error?.response?.data?.message || "Failed to delete message");
+        }
+    },
+
+    editMessage: async (messageId, text) => {
+        const { messages } = get();
+        try {
+            const res = await axiosInstance.put(`/messages/edit/${messageId}`, { text });
+            set({
+                messages: messages.map((m) => (m._id === messageId ? res.data : m)),
+            });
+        } catch (error) {
+            toast.error(error?.response?.data?.message || "Failed to edit message");
+        }
+    },
+
     subscribeToMessages: () => {
         const { currentRoomId } = get();
         if (!currentRoomId) return;
@@ -42,8 +65,26 @@ export const useChatStore = create((set, get) => ({
         socket.on("newMessage", (newMessage) => {
             if (newMessage.roomId !== currentRoomId) return;
             const currentMessages = get().messages;
-            if (currentMessages.find((m) => m._id === newMessage._id)) return; // Prevent double-add for sender
+            if (currentMessages.find((m) => m._id === newMessage._id)) return;
             set({ messages: [...currentMessages, newMessage] });
+        });
+
+        socket.on("messageDeleted", (messageId) => {
+            const currentMessages = get().messages;
+            set({ messages: currentMessages.filter((m) => m._id !== messageId) });
+        });
+
+        socket.on("messageEdited", (updatedMessage) => {
+            const currentMessages = get().messages;
+            set({
+                messages: currentMessages.map((m) =>
+                    m._id === updatedMessage._id ? updatedMessage : m
+                ),
+            });
+        });
+
+        socket.on("roomUsers", (users) => {
+            set({ roomUsers: users });
         });
 
         socket.on("userTyping", ({ name, socketId }) => {
@@ -80,11 +121,14 @@ export const useChatStore = create((set, get) => ({
         const socket = useAuthStore.getState().socket;
         if (socket) {
             socket.off("newMessage");
+            socket.off("messageDeleted");
+            socket.off("messageEdited");
+            socket.off("roomUsers");
             socket.off("userTyping");
             socket.off("userStopTyping");
             socket.off("roomAction");
         }
-        set({ typingUsers: [] });
+        set({ typingUsers: [], roomUsers: [] });
     },
 
     setCurrentRoomId: (roomId) => set({ currentRoomId: roomId }),

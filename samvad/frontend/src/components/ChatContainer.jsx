@@ -1,9 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useChatStore } from "../store/useChatStore";
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
 import { useAuthStore } from "../store/useAuthStore";
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, Pencil, Trash2, X, Check } from "lucide-react";
+import toast from "react-hot-toast";
 
 const ChatContainer = () => {
     const {
@@ -14,9 +15,14 @@ const ChatContainer = () => {
         subscribeToMessages,
         unsubscribeFromMessages,
         typingUsers,
+        deleteMessage,
+        editMessage,
     } = useChatStore();
     const { authUser } = useAuthStore();
     const messageEndRef = useRef(null);
+
+    const [editingId, setEditingId] = useState(null);
+    const [editValue, setEditValue] = useState("");
 
     useEffect(() => {
         if (currentRoomId) {
@@ -31,6 +37,23 @@ const ChatContainer = () => {
             messageEndRef.current.scrollIntoView({ behavior: "smooth" });
         }
     }, [messages]);
+
+    const handleEditClick = (message) => {
+        setEditingId(message._id);
+        setEditValue(message.text || "");
+    };
+
+    const handleSaveEdit = async (messageId) => {
+        if (!editValue.trim()) return;
+        await editMessage(messageId, editValue);
+        setEditingId(null);
+    };
+
+    const handleDeleteClick = async (messageId) => {
+        if (window.confirm("Are you sure you want to delete this message?")) {
+            await deleteMessage(messageId);
+        }
+    };
 
     if (isMessagesLoading) {
         return (
@@ -69,6 +92,7 @@ const ChatContainer = () => {
                         const senderPic = (sender?.profilePic && sender.profilePic.trim() !== "") 
                             ? sender.profilePic 
                             : "/account.png";
+                        const isEditing = editingId === message._id;
 
                         return (
                             <div
@@ -82,16 +106,22 @@ const ChatContainer = () => {
                                 />
 
                                 <div className={`msg-col ${isOwn ? "own" : "other"}`}>
-                                    {!isOwn && (
-                                        <span className="msg-sender-name">{senderName}</span>
-                                    )}
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: isOwn ? 'flex-end' : 'flex-start' }}>
+                                        {!isOwn && (
+                                            <span className="msg-sender-name">{senderName}</span>
+                                        )}
+                                        {message.isEdited && (
+                                            <span className="msg-edited-badge" style={{ fontSize: '10px', opacity: 0.5, fontStyle: 'italic' }}>(edited)</span>
+                                        )}
+                                    </div>
 
                                     <div
                                         className={`msg-bubble ${isOwn ? "own" : "other"}`}
                                         style={isOwn ? {
                                             background: "var(--room-bubble, linear-gradient(135deg, var(--primary), var(--primary-dark)))",
                                             boxShadow: "0 4px 16px var(--room-bubble-shadow, rgba(99,102,241,0.25))",
-                                        } : {}}
+                                            position: 'relative',
+                                        } : { position: 'relative' }}
                                     >
                                         {message.image && (
                                             <img
@@ -107,7 +137,49 @@ const ChatContainer = () => {
                                                 className="msg-audio"
                                             />
                                         )}
-                                        {message.text && <p>{message.text}</p>}
+                                        
+                                        {isEditing ? (
+                                            <div className="edit-container" style={{ display: 'flex', flexDirection: 'column', gap: '8px', minWidth: '200px' }}>
+                                                <textarea
+                                                    className="edit-textarea"
+                                                    value={editValue}
+                                                    onChange={(e) => setEditValue(e.target.value)}
+                                                    autoFocus
+                                                    style={{
+                                                        background: 'rgba(255,255,255,0.1)',
+                                                        border: '1px solid rgba(255,255,255,0.2)',
+                                                        borderRadius: '4px',
+                                                        color: '#fff',
+                                                        padding: '8px',
+                                                        width: '100%',
+                                                        resize: 'none',
+                                                        fontSize: '14px'
+                                                    }}
+                                                />
+                                                <div style={{ display: 'flex', gap: '4px', justifyContent: 'flex-end' }}>
+                                                    <button onClick={() => setEditingId(null)} className="btn-icon-small">
+                                                        <X size={14} />
+                                                    </button>
+                                                    <button onClick={() => handleSaveEdit(message._id)} className="btn-icon-small primary">
+                                                        <Check size={14} />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
+                                                {message.text && <p style={{ margin: 0 }}>{message.text}</p>}
+                                                {isOwn && (
+                                                    <div className="msg-actions" style={{ display: 'flex', gap: '4px', opacity: 0, transition: 'opacity 0.2s' }}>
+                                                        <button onClick={() => handleEditClick(message)} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: '2px', opacity: 0.7 }}>
+                                                            <Pencil size={12} />
+                                                        </button>
+                                                        <button onClick={() => handleDeleteClick(message._id)} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: '2px', opacity: 0.7 }}>
+                                                            <Trash2 size={12} />
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                                 <span className="msg-time-outer">
