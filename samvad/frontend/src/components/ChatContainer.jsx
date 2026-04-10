@@ -145,6 +145,7 @@ const ChatContainer = () => {
                                                     value={editValue}
                                                     onChange={(e) => setEditValue(e.target.value)}
                                                     autoFocus
+                                                    onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)}
                                                     style={{
                                                         background: 'rgba(255,255,255,0.1)',
                                                         border: '1px solid rgba(255,255,255,0.2)',
