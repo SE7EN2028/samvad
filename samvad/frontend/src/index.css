@@ -68,17 +68,18 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar {
-  width: 4px;
+  width: 6px;
+  height: 6px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.08);
   border-radius: 10px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.15);
 }
 
 @keyframes spin {
@@ -167,6 +168,27 @@ body {
   gap: 8px;
   font-size: 13px;
   color: var(--text-subtle);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.navbar-user:hover {
+  color: var(--text-main);
+}
+
+.profile-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-muted);
+  text-decoration: none;
+  margin-bottom: 28px;
+  transition: color 0.2s;
+}
+
+.profile-back-link:hover {
+  color: var(--text-main);
 }
 
 .navbar-avatar {
@@ -398,6 +420,14 @@ body {
   border-radius: var(--radius-md);
   padding: 14px;
   animation: fade-in 0.25s ease forwards;
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.text-success {
+  color: var(--success);
 }
 
 .room-link-label {
@@ -659,10 +689,29 @@ body {
 }
 
 .msg-bubble.own {
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  background: var(--room-bubble, linear-gradient(135deg, var(--primary), var(--primary-dark)));
   color: white;
   border-bottom-right-radius: 4px;
-  box-shadow: 0 4px 16px rgba(99,102,241,0.25);
+  box-shadow: 0 4px 16px var(--room-bubble-shadow, rgba(99,102,241,0.25));
+}
+.msg-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.msg-header.own { justify-content: flex-end; }
+.msg-header.other { justify-content: flex-start; }
+
+.edit-actions {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+}
+.msg-content-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
 }
 
 .msg-bubble.other {
@@ -1320,7 +1369,6 @@ body {
   100% { opacity: 0; transform: translateX(-50%) translateY(-6px); }
 }
 
-/* Chat Enhancement Styles */
 .msg-bubble:hover .msg-actions {
   opacity: 1 !important;
 }

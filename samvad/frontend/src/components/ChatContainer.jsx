@@ -89,8 +89,8 @@ const ChatContainer = () => {
                         const isOwn = message.senderId?._id === authUser._id || message.senderId === authUser._id;
                         const sender = message.senderId;
                         const senderName = sender?.fullName || "Unknown";
-                        const senderPic = (sender?.profilePic && sender.profilePic.trim() !== "") 
-                            ? sender.profilePic 
+                        const senderPic = (sender?.profilePic && sender.profilePic.trim() !== "")
+                            ? sender.profilePic
                             : "/account.png";
                         const isEditing = editingId === message._id;
 
@@ -106,23 +106,16 @@ const ChatContainer = () => {
                                 />
 
                                 <div className={`msg-col ${isOwn ? "own" : "other"}`}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: isOwn ? 'flex-end' : 'flex-start' }}>
+                                    <div className={`msg-header ${isOwn ? "own" : "other"}`}>
                                         {!isOwn && (
                                             <span className="msg-sender-name">{senderName}</span>
                                         )}
                                         {message.isEdited && (
-                                            <span className="msg-edited-badge" style={{ fontSize: '10px', opacity: 0.5, fontStyle: 'italic' }}>(edited)</span>
+                                            <span className="msg-edited-badge">(edited)</span>
                                         )}
                                     </div>
 
-                                    <div
-                                        className={`msg-bubble ${isOwn ? "own" : "other"}`}
-                                        style={isOwn ? {
-                                            background: "var(--room-bubble, linear-gradient(135deg, var(--primary), var(--primary-dark)))",
-                                            boxShadow: "0 4px 16px var(--room-bubble-shadow, rgba(99,102,241,0.25))",
-                                            position: 'relative',
-                                        } : { position: 'relative' }}
-                                    >
+                                    <div className={`msg-bubble ${isOwn ? "own" : "other"}`}>
                                         {message.image && (
                                             <img
                                                 src={message.image}
@@ -137,27 +130,17 @@ const ChatContainer = () => {
                                                 className="msg-audio"
                                             />
                                         )}
-                                        
+
                                         {isEditing ? (
-                                            <div className="edit-container" style={{ display: 'flex', flexDirection: 'column', gap: '8px', minWidth: '200px' }}>
+                                            <div className="edit-container">
                                                 <textarea
                                                     className="edit-textarea"
                                                     value={editValue}
                                                     onChange={(e) => setEditValue(e.target.value)}
                                                     autoFocus
                                                     onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)}
-                                                    style={{
-                                                        background: 'rgba(255,255,255,0.1)',
-                                                        border: '1px solid rgba(255,255,255,0.2)',
-                                                        borderRadius: '4px',
-                                                        color: '#fff',
-                                                        padding: '8px',
-                                                        width: '100%',
-                                                        resize: 'none',
-                                                        fontSize: '14px'
-                                                    }}
                                                 />
-                                                <div style={{ display: 'flex', gap: '4px', justifyContent: 'flex-end' }}>
+                                                <div className="edit-actions">
                                                     <button onClick={() => setEditingId(null)} className="btn-icon-small">
                                                         <X size={14} />
                                                     </button>
@@ -167,14 +150,14 @@ const ChatContainer = () => {
                                                 </div>
                                             </div>
                                         ) : (
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
+                                            <div className="msg-content-row">
                                                 {message.text && <p style={{ margin: 0 }}>{message.text}</p>}
                                                 {isOwn && (
-                                                    <div className="msg-actions" style={{ display: 'flex', gap: '4px', opacity: 0, transition: 'opacity 0.2s' }}>
-                                                        <button onClick={() => handleEditClick(message)} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: '2px', opacity: 0.7 }}>
+                                                    <div className="msg-hover-actions">
+                                                        <button onClick={() => handleEditClick(message)} className="btn-icon-small">
                                                             <Pencil size={12} />
                                                         </button>
-                                                        <button onClick={() => handleDeleteClick(message._id)} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: '2px', opacity: 0.7 }}>
+                                                        <button onClick={() => handleDeleteClick(message._id)} className="btn-icon-small">
                                                             <Trash2 size={12} />
                                                         </button>
                                                     </div>

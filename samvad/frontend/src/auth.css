@@ -38,6 +38,10 @@
   overflow: hidden;
 }
 
+.auth-card-wide {
+  max-width: 480px;
+}
+
 .auth-card::before {
   content: '';
   position: absolute;
