@@ -31,7 +31,7 @@ const SignupPage = () => {
 
     return (
         <div className="auth-page">
-            <div className="auth-card" style={{ maxWidth: '460px' }}>
+            <div className="auth-card auth-card-wide">
                 <div className="auth-deco" />
                 <div className="auth-deco-2" />
 

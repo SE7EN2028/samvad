@@ -56,7 +56,7 @@ const HomePage = () => {
                     </button>
 
                     {generatedId && (
-                        <div className="room-link-box" style={{ marginTop: '14px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        <div className="room-link-box">
                             <div>
                                 <p className="room-link-label">Room ID</p>
                                 <div className="room-link-row">
@@ -82,14 +82,14 @@ const HomePage = () => {
                                     </div>
                                     <button className="btn-icon" onClick={copyToClipboard} type="button">
                                         {copied
-                                            ? <Check size={16} style={{ color: 'var(--success)' }} />
+                                            ? <Check size={16} className="text-success" />
                                             : <Copy size={16} />
                                         }
                                     </button>
                                 </div>
                             </div>
 
-                            <button className="btn-ghost-primary" onClick={handleJoinRoom} type="button" style={{ marginTop: '4px' }}>
+                            <button className="btn-ghost-primary" onClick={handleJoinRoom} type="button">
                                 Enter Created Room
                             </button>
                         </div>

@@ -74,21 +74,7 @@ const ProfilePage = () => {
                     onChange={handleAvatarChange}
                 />
 
-                <Link
-                    to="/"
-                    style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: "6px",
-                        fontSize: "13px",
-                        color: "var(--text-muted)",
-                        textDecoration: "none",
-                        marginBottom: "28px",
-                        transition: "color 0.2s",
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.color = "var(--text-main)"}
-                    onMouseLeave={(e) => e.currentTarget.style.color = "var(--text-muted)"}
-                >
+                <Link to="/" className="profile-back-link">
                     <ArrowLeft size={14} />
                     Back to Home
                 </Link>

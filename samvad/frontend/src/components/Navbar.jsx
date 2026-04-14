@@ -17,7 +17,7 @@ const Navbar = () => {
             <div className="navbar-actions">
                 {authUser && (
                     <>
-                        <Link to="/profile" className="navbar-profile-link">
+                        <Link to="/profile" className="navbar-user">
                             <img
                                 src={authUser.profilePic || `/account.png`}
                                 alt={authUser.fullName}
