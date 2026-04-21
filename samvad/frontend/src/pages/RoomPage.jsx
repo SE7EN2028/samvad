@@ -5,6 +5,7 @@ import { useAuthStore } from "../store/useAuthStore";
 import ChatContainer from "../components/ChatContainer";
 import { getRoomVibe } from "../lib/roomVibe";
 import toast from "react-hot-toast";
+import { motion } from "framer-motion";
 
 const RoomPage = () => {
     const { roomId } = useParams();
@@ -28,7 +29,13 @@ const RoomPage = () => {
     }, [roomId, navigate, setCurrentRoomId, socket]);
 
     return (
-        <div className="room-page" style={vibe}>
+        <motion.div
+            className="room-page"
+            style={vibe}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+        >
             <div
                 className="room-bg-glow"
                 style={{ background: vibe["--room-bg-glow"] }}
@@ -38,7 +45,7 @@ const RoomPage = () => {
                     <ChatContainer />
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 };
 

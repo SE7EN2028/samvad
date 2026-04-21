@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, LogIn, Copy, Check, MessageSquare } from "lucide-react";
+import { Plus, LogIn, Copy, Check, MessageSquare, Zap, Shield, Users } from "lucide-react";
 import toast from "react-hot-toast";
 
 const HomePage = () => {
@@ -45,13 +45,43 @@ const HomePage = () => {
                     <p className="home-subtitle">
                         Create a private space, share the link, and start chatting instantly with anyone, anywhere.
                     </p>
+
+                    <div className="home-features">
+                        <div className="home-feature">
+                            <div className="home-feature-icon">
+                                <Zap size={14} />
+                            </div>
+                            <div className="home-feature-text">
+                                <span className="home-feature-title">Instant</span>
+                                <span className="home-feature-desc">Real-time messaging</span>
+                            </div>
+                        </div>
+                        <div className="home-feature">
+                            <div className="home-feature-icon" style={{ background: 'rgba(139, 92, 246, 0.1)', color: '#a78bfa' }}>
+                                <Shield size={14} />
+                            </div>
+                            <div className="home-feature-text">
+                                <span className="home-feature-title">Private</span>
+                                <span className="home-feature-desc">Room-based access</span>
+                            </div>
+                        </div>
+                        <div className="home-feature">
+                            <div className="home-feature-icon" style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#34d399' }}>
+                                <Users size={14} />
+                            </div>
+                            <div className="home-feature-text">
+                                <span className="home-feature-title">Together</span>
+                                <span className="home-feature-desc">Voice, text & media</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="home-card">
                     <MessageSquare size={140} className="card-bg-icon" />
 
                     <button className="btn-primary" onClick={handleCreateRoom}>
-                        <Plus size={20} />
+                        <Plus size={18} />
                         Create New Room
                     </button>
 
@@ -61,19 +91,19 @@ const HomePage = () => {
                                 <p className="room-link-label">Room ID</p>
                                 <div className="room-link-row">
                                     <div className="room-link-text">{generatedId}</div>
-                                    <button 
-                                        className="btn-icon" 
+                                    <button
+                                        className="btn-icon"
                                         onClick={() => {
                                             navigator.clipboard.writeText(generatedId);
                                             toast.success("Room ID copied!");
-                                        }} 
+                                        }}
                                         type="button"
                                     >
                                         <Copy size={16} />
                                     </button>
                                 </div>
                             </div>
-                            
+
                             <div>
                                 <p className="room-link-label">Share Link</p>
                                 <div className="room-link-row">

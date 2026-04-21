@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { Loader } from "lucide-react";
+import { Loader, MessageSquare } from "lucide-react";
 import { Toaster } from "react-hot-toast";
 
 import Navbar from "./components/Navbar";
@@ -21,9 +21,20 @@ const App = () => {
 
     if (isCheckingAuth && !authUser)
         return (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
-            <Loader style={{ width: 40, height: 40, animation: 'spin 1s linear infinite', color: '#6366f1' }} />
-        </div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#030712' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+                    <div style={{
+                        width: '44px', height: '44px',
+                        background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                        borderRadius: '12px',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        animation: 'pulse-dot 1.5s ease infinite'
+                    }}>
+                        <MessageSquare size={20} color="white" />
+                    </div>
+                    <Loader style={{ width: 20, height: 20, animation: 'spin 1s linear infinite', color: '#6366f1' }} />
+                </div>
+            </div>
         );
 
     return (
