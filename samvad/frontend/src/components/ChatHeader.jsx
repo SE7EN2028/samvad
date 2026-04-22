@@ -1,7 +1,8 @@
-import { X, Hash, Users, Copy, Check } from "lucide-react";
+import { X, Hash, Users, Copy, Check, Link2, LogOut } from "lucide-react";
 import { useChatStore } from "../store/useChatStore";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 
 const ChatHeader = () => {
@@ -9,6 +10,7 @@ const ChatHeader = () => {
     const navigate = useNavigate();
     const [idCopied, setIdCopied] = useState(false);
     const [linkCopied, setLinkCopied] = useState(false);
+    const [showMembers, setShowMembers] = useState(false);
 
     const copyRoomId = () => {
         navigator.clipboard.writeText(currentRoomId);
@@ -26,65 +28,73 @@ const ChatHeader = () => {
     };
 
     return (
-        <div
-            className="chat-header"
-            style={{ borderBottomColor: "var(--room-header-border, var(--glass-border))" }}
-        >
+        <div className="chat-header">
             <div className="chat-header-left">
-                <div
-                    className="chat-header-icon"
-                    style={{
-                        background: "color-mix(in srgb, var(--room-primary, var(--primary)) 15%, transparent)",
-                        borderColor: "color-mix(in srgb, var(--room-primary, var(--primary)) 30%, transparent)",
-                        color: "var(--room-primary, var(--primary-light))",
-                    }}
-                >
-                    <Hash size={18} />
+                <div className="chat-header-icon">
+                    <Hash size={16} strokeWidth={2.5} />
                 </div>
                 <div>
                     <div className="chat-header-title">
-                        Room <span style={{ opacity: 0.6, fontWeight: 400 }}>{currentRoomId}</span>
+                        Room <span className="chat-header-id">{currentRoomId}</span>
                     </div>
-                    <div
-                        className="chat-header-sub"
-                        style={{ color: "var(--room-primary-light, var(--primary-light))" }}
+                    <button
+                        className="chat-header-members-btn"
+                        onClick={() => setShowMembers(!showMembers)}
                     >
-                        <span className="live-indicator" style={{ background: "var(--room-primary, var(--success))" }} />
+                        <span className="live-indicator" />
                         <Users size={11} />
-                        {roomUsers.length} {roomUsers.length === 1 ? 'member' : 'members'} active
-                    </div>
+                        <span>{roomUsers.length} {roomUsers.length === 1 ? 'member' : 'members'}</span>
+                    </button>
                 </div>
             </div>
 
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <button
-                    className="btn-leave"
-                    onClick={copyRoomId}
-                    title="Copy room ID"
-                    style={{ borderRadius: "8px", width: "auto", padding: "0 10px", gap: "6px", display: "flex", alignItems: "center", height: "32px", fontSize: "11px", fontWeight: 600 }}
-                >
-                    {idCopied ? <Check size={13} style={{ color: "var(--room-primary, var(--success))" }} /> : <Hash size={13} />}
-                    {idCopied ? "Copied ID" : "ID"}
+            <div className="chat-header-actions">
+                <button className="chat-header-action" onClick={copyRoomId} title="Copy room ID">
+                    {idCopied ? <Check size={14} className="chat-action-success" /> : <Hash size={14} />}
+                    <span>{idCopied ? "Copied" : "Copy ID"}</span>
+                </button>
+
+                <button className="chat-header-action" onClick={copyRoomLink} title="Copy room link">
+                    {linkCopied ? <Check size={14} className="chat-action-success" /> : <Link2 size={14} />}
+                    <span>{linkCopied ? "Copied" : "Share"}</span>
                 </button>
 
                 <button
-                    className="btn-leave"
-                    onClick={copyRoomLink}
-                    title="Copy room link"
-                    style={{ borderRadius: "8px", width: "auto", padding: "0 10px", gap: "6px", display: "flex", alignItems: "center", height: "32px", fontSize: "11px", fontWeight: 600 }}
-                >
-                    {linkCopied ? <Check size={13} style={{ color: "var(--room-primary, var(--success))" }} /> : <Copy size={13} />}
-                    {linkCopied ? "Copied Link" : "Link"}
-                </button>
-
-                <button
-                    className="btn-leave"
+                    className="chat-header-action chat-header-leave"
                     onClick={() => navigate("/")}
                     title="Leave room"
                 >
-                    <X size={16} />
+                    <LogOut size={14} />
                 </button>
             </div>
+
+            <AnimatePresence>
+                {showMembers && roomUsers.length > 0 && (
+                    <motion.div
+                        className="chat-members-dropdown"
+                        initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -8, scale: 0.96 }}
+                        transition={{ duration: 0.15 }}
+                    >
+                        <div className="chat-members-header">
+                            <Users size={12} />
+                            Active Members
+                        </div>
+                        {roomUsers.map((user, i) => (
+                            <div key={user._id || i} className="chat-member-item">
+                                <img
+                                    src={user.profilePic || '/account.png'}
+                                    alt={user.fullName}
+                                    className="chat-member-avatar"
+                                />
+                                <span className="chat-member-name">{user.fullName}</span>
+                                <span className="chat-member-dot" />
+                            </div>
+                        ))}
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
