@@ -1,7 +1,8 @@
 import { useState, useRef } from "react";
 import { useAuthStore } from "../store/useAuthStore";
-import { User, Lock, Eye, EyeOff, Camera, Loader2, ArrowLeft } from "lucide-react";
+import { User, Lock, Eye, EyeOff, Camera, Loader2, ArrowLeft, AtSign, Shield, CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 
 const ProfilePage = () => {
@@ -63,9 +64,16 @@ const ProfilePage = () => {
         setAvatarBase64(null);
     };
 
+    const hasChanges = fullName !== authUser?.fullName || avatarBase64 || newPassword;
+
     return (
         <div className="profile-page">
-            <div className="profile-card">
+            <motion.div
+                className="profile-container"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+            >
                 <input
                     type="file"
                     accept="image/*"
@@ -74,54 +82,82 @@ const ProfilePage = () => {
                     onChange={handleAvatarChange}
                 />
 
-                <Link to="/" className="profile-back-link">
-                    <ArrowLeft size={14} />
-                    Back to Home
-                </Link>
+                <div className="profile-header-section">
+                    <Link to="/" className="profile-back-link">
+                        <ArrowLeft size={14} />
+                        Back
+                    </Link>
 
-                <div className="profile-avatar-section">
-                    <div className="profile-avatar-wrap">
-                        <img
-                            src={avatarPreview || `/account.png`}
-                            alt="Profile"
-                            className="profile-avatar"
-                        />
-                        <button
-                            type="button"
-                            className="profile-avatar-btn"
-                            onClick={() => fileInputRef.current?.click()}
-                            title="Change photo"
-                        >
-                            <Camera size={13} />
-                        </button>
+                    <div className="profile-banner" />
+
+                    <div className="profile-avatar-section">
+                        <div className="profile-avatar-wrap">
+                            <img
+                                src={avatarPreview || `/account.png`}
+                                alt="Profile"
+                                className="profile-avatar"
+                            />
+                            <button
+                                type="button"
+                                className="profile-avatar-btn"
+                                onClick={() => fileInputRef.current?.click()}
+                                title="Change photo"
+                            >
+                                <Camera size={13} />
+                            </button>
+                        </div>
+                        <div className="profile-identity">
+                            <h2 className="profile-display-name">{authUser?.fullName}</h2>
+                            <span className="profile-username">
+                                <AtSign size={12} />
+                                {authUser?.username}
+                            </span>
+                        </div>
                     </div>
-                    <p className="profile-avatar-hint">Click the camera to change your photo</p>
-                    <p className="profile-username">@{authUser?.username}</p>
                 </div>
 
                 <form className="profile-form" onSubmit={handleSubmit}>
-                    <div>
-                        <p className="profile-section-title">Account Info</p>
-                        <div className="profile-field">
-                            <label className="profile-label">Full Name</label>
-                            <div className="profile-input-wrap">
-                                <div className="profile-input-icon"><User size={16} /></div>
-                                <input
-                                    type="text"
-                                    className="profile-input"
-                                    value={fullName}
-                                    onChange={(e) => setFullName(e.target.value)}
-                                    placeholder="Your full name"
-                                />
+                    <div className="profile-card">
+                        <div className="profile-card-header">
+                            <User size={15} />
+                            <span>Account Info</span>
+                        </div>
+                        <div className="profile-card-body">
+                            <div className="profile-field">
+                                <label className="profile-label">Full Name</label>
+                                <div className="profile-input-wrap">
+                                    <div className="profile-input-icon"><User size={16} /></div>
+                                    <input
+                                        type="text"
+                                        className="profile-input"
+                                        value={fullName}
+                                        onChange={(e) => setFullName(e.target.value)}
+                                        placeholder="Your full name"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="profile-field">
+                                <label className="profile-label">Username</label>
+                                <div className="profile-input-wrap">
+                                    <div className="profile-input-icon"><AtSign size={16} /></div>
+                                    <input
+                                        type="text"
+                                        className="profile-input profile-input-disabled"
+                                        value={authUser?.username || ""}
+                                        disabled
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="profile-divider" />
-
-                    <div>
-                        <p className="profile-section-title">Change Password</p>
-                        <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+                    <div className="profile-card">
+                        <div className="profile-card-header">
+                            <Shield size={15} />
+                            <span>Security</span>
+                        </div>
+                        <div className="profile-card-body">
                             <div className="profile-field">
                                 <label className="profile-label">Current Password</label>
                                 <div className="profile-input-wrap">
@@ -166,16 +202,25 @@ const ProfilePage = () => {
                         </div>
                     </div>
 
-                    <button type="submit" className="btn-profile-save" disabled={isUpdatingProfile}>
+                    <button
+                        type="submit"
+                        className={`btn-profile-save ${hasChanges ? 'has-changes' : ''}`}
+                        disabled={isUpdatingProfile || !hasChanges}
+                    >
                         {isUpdatingProfile ? (
                             <>
-                                <Loader2 size={18} className="spin" />
+                                <Loader2 size={16} className="spin" />
                                 Saving...
                             </>
-                        ) : "Save Changes"}
+                        ) : (
+                            <>
+                                <CheckCircle size={16} />
+                                Save Changes
+                            </>
+                        )}
                     </button>
                 </form>
-            </div>
+            </motion.div>
         </div>
     );
 };
