@@ -1,14 +1,15 @@
 import { useState, useRef, useEffect } from "react";
 import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuthStore";
-import { Send, X, Zap, Mic, Trash2 } from "lucide-react";
+import { Send, X, Zap, Mic, Trash2, ImagePlus, Smile } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 
 const COMMANDS = [
-    { name: "/celebrate", desc: "Rain confetti on everyone in the room 🎊", action: "celebrate" },
-    { name: "/laugh", desc: "Send laughing emojis floating globally 😂", action: "laugh" },
-    { name: "/angry", desc: "Send angry emojis floating globally 😡", action: "angry" },
-    { name: "/surprised", desc: "Send surprised emojis floating globally 😮", action: "surprised" }
+    { name: "/celebrate", desc: "Rain confetti on everyone in the room", emoji: "🎊", action: "celebrate" },
+    { name: "/laugh", desc: "Send laughing emojis floating globally", emoji: "😂", action: "laugh" },
+    { name: "/angry", desc: "Send angry emojis floating globally", emoji: "😡", action: "angry" },
+    { name: "/surprised", desc: "Send surprised emojis floating globally", emoji: "😮", action: "surprised" }
 ];
 
 const MessageInput = () => {
@@ -16,14 +17,13 @@ const MessageInput = () => {
     const [imagePreview, setImagePreview] = useState(null);
     const [showPalette, setShowPalette] = useState(false);
     const [paletteIndex, setPaletteIndex] = useState(0);
-
     const [isRecording, setIsRecording] = useState(false);
     const [recordingTime, setRecordingTime] = useState(0);
 
     const fileInputRef = useRef(null);
+    const inputRef = useRef(null);
     const typingTimerRef = useRef(null);
     const isTypingRef = useRef(false);
-
     const mediaRecorderRef = useRef(null);
     const audioChunksRef = useRef([]);
     const timerIntervalRef = useRef(null);
@@ -32,7 +32,7 @@ const MessageInput = () => {
     const { sendMessage, currentRoomId } = useChatStore();
     const { authUser, socket } = useAuthStore();
 
-    const filteredCommands = text.startsWith("/") 
+    const filteredCommands = text.startsWith("/")
         ? COMMANDS.filter(c => c.name.startsWith(text.toLowerCase().split(' ')[0]))
         : [];
 
@@ -103,13 +103,11 @@ const MessageInput = () => {
             mediaRecorder.onstop = () => {
                 stream.getTracks().forEach(track => track.stop());
                 if (isCancelledRef.current) return;
-                
                 const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
                 const reader = new FileReader();
                 reader.readAsDataURL(audioBlob);
                 reader.onloadend = () => {
-                    const base64Audio = reader.result;
-                    sendMessage({ message: "", audio: base64Audio });
+                    sendMessage({ message: "", audio: reader.result });
                 };
             };
 
@@ -120,14 +118,11 @@ const MessageInput = () => {
                 setRecordingTime(prev => prev + 1);
             }, 1000);
 
-            // Stop typing indicator when recording voice
             clearTimeout(typingTimerRef.current);
             isTypingRef.current = false;
             if (socket && currentRoomId) socket.emit("stopTyping", { roomId: currentRoomId });
-
         } catch (err) {
             toast.error("Microphone access denied or unavailable");
-            console.error(err);
         }
     };
 
@@ -158,7 +153,6 @@ const MessageInput = () => {
 
     const handleSendMessage = async (e) => {
         if (e) e.preventDefault();
-        
         let messageText = text.trim();
         if (!messageText && !imagePreview) return;
 
@@ -205,53 +199,62 @@ const MessageInput = () => {
                 return;
             }
         }
-
-        if (e.key === "Enter" && !e.shiftKey) {
-            // No need to call handleSendMessage here, 
-            // the form onSubmit will handle the standard Enter key behavior.
-        }
     };
 
-    const formatTime = (timeInSeconds) => {
-        const m = Math.floor(timeInSeconds / 60);
-        const s = timeInSeconds % 60;
-        return `${m}:${s.toString().padStart(2, '0')}`;
-    };
+    const formatTime = (s) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
 
     const canSendText = text.trim() || imagePreview || text.startsWith("/");
 
     return (
-        <div className="chat-input-bar" style={{ position: "relative" }}>
-            {showPalette && filteredCommands.length > 0 && !isRecording && (
-                <div className="cmd-palette">
-                    <div className="cmd-palette-header">
-                        <Zap size={10} style={{ display: 'inline', marginRight: '4px', verticalAlign: 'text-top' }} /> 
-                        Commands
-                    </div>
-                    {filteredCommands.map((cmd, idx) => (
-                        <div 
-                            key={cmd.name}
-                            className={`cmd-item ${idx === paletteIndex ? "active" : ""}`}
-                            onClick={() => executeCommand(cmd)}
-                            onMouseEnter={() => setPaletteIndex(idx)}
-                        >
-                            <span className="cmd-name">{cmd.name}</span>
-                            <span className="cmd-desc">{cmd.desc}</span>
+        <div className="chat-input-bar">
+            <AnimatePresence>
+                {showPalette && filteredCommands.length > 0 && !isRecording && (
+                    <motion.div
+                        className="cmd-palette"
+                        initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                        transition={{ duration: 0.12 }}
+                    >
+                        <div className="cmd-palette-header">
+                            <Zap size={10} />
+                            Commands
                         </div>
-                    ))}
-                </div>
-            )}
+                        {filteredCommands.map((cmd, idx) => (
+                            <div
+                                key={cmd.name}
+                                className={`cmd-item ${idx === paletteIndex ? "active" : ""}`}
+                                onClick={() => executeCommand(cmd)}
+                                onMouseEnter={() => setPaletteIndex(idx)}
+                            >
+                                <span className="cmd-emoji">{cmd.emoji}</span>
+                                <div className="cmd-text">
+                                    <span className="cmd-name">{cmd.name}</span>
+                                    <span className="cmd-desc">{cmd.desc}</span>
+                                </div>
+                            </div>
+                        ))}
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
-            {imagePreview && !isRecording && (
-                <div className="img-preview-wrap">
-                    <div className="img-preview-thumb">
-                        <img src={imagePreview} alt="Preview" />
-                        <button className="img-preview-remove" onClick={removeImage} type="button">
-                            <X size={9} />
-                        </button>
-                    </div>
-                </div>
-            )}
+            <AnimatePresence>
+                {imagePreview && !isRecording && (
+                    <motion.div
+                        className="img-preview-wrap"
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                    >
+                        <div className="img-preview-thumb">
+                            <img src={imagePreview} alt="Preview" />
+                            <button className="img-preview-remove" onClick={removeImage} type="button">
+                                <X size={10} />
+                            </button>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             <form className="chat-input-form" onSubmit={handleSendMessage}>
                 <input
@@ -262,24 +265,31 @@ const MessageInput = () => {
                     onChange={handleImageChange}
                 />
 
+                {!isRecording && (
+                    <button
+                        type="button"
+                        className="chat-input-action"
+                        onClick={() => fileInputRef.current?.click()}
+                        title="Attach image"
+                    >
+                        <ImagePlus size={18} />
+                    </button>
+                )}
+
                 {isRecording ? (
                     <div className="recording-view">
                         <div className="recording-pulse" />
                         <span className="recording-timer">{formatTime(recordingTime)}</span>
-                        
-                        <div style={{ marginLeft: "auto", display: "flex", gap: "8px" }}>
-                            <button
-                                type="button"
-                                className="btn-mic-cancel"
-                                onClick={cancelRecording}
-                                title="Cancel"
-                            >
-                                <Trash2 size={16} />
+                        <span className="recording-label">Recording...</span>
+                        <div style={{ marginLeft: "auto", display: "flex", gap: "6px" }}>
+                            <button type="button" className="btn-mic-cancel" onClick={cancelRecording}>
+                                <Trash2 size={15} />
                             </button>
                         </div>
                     </div>
                 ) : (
                     <input
+                        ref={inputRef}
                         type="text"
                         className="chat-input-field"
                         placeholder="Type a message or / for commands..."
@@ -291,35 +301,26 @@ const MessageInput = () => {
                 )}
 
                 {isRecording ? (
-                    <button
+                    <motion.button
                         type="button"
-                        className="btn-send btn-send-audio"
+                        className="btn-send"
                         onClick={sendRecording}
-                        style={{
-                            background: "var(--room-bubble, linear-gradient(135deg, var(--primary), var(--primary-dark)))",
-                            boxShadow: "0 4px 12px var(--room-bubble-shadow, rgba(99,102,241,0.3))",
-                        }}
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 15 }}
                     >
-                        <Send size={18} />
-                    </button>
+                        <Send size={17} />
+                    </motion.button>
                 ) : canSendText ? (
-                    <button
+                    <motion.button
                         type="submit"
                         className="btn-send"
-                        style={{
-                            background: "var(--room-bubble, linear-gradient(135deg, var(--primary), var(--primary-dark)))",
-                            boxShadow: "0 4px 12px var(--room-bubble-shadow, rgba(99,102,241,0.3))",
-                        }}
+                        whileTap={{ scale: 0.92 }}
                     >
-                        <Send size={18} />
-                    </button>
+                        <Send size={17} />
+                    </motion.button>
                 ) : (
-                    <button
-                        type="button"
-                        className="btn-mic"
-                        onClick={startRecording}
-                        title="Record a voice note"
-                    >
+                    <button type="button" className="btn-mic" onClick={startRecording} title="Voice note">
                         <Mic size={18} />
                     </button>
                 )}
