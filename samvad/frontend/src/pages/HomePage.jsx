@@ -17,8 +17,10 @@ const HomePage = () => {
 
     const handleJoinRoom = (e) => {
         e.preventDefault();
-        const idToJoin = roomId.trim() || generatedId;
+        let idToJoin = roomId.trim() || generatedId;
         if (!idToJoin) return toast.error("Enter or generate a Room ID");
+        const roomMatch = idToJoin.match(/\/room\/([^/?#]+)/);
+        if (roomMatch) idToJoin = roomMatch[1];
         navigate(`/room/${idToJoin}`);
     };
 
