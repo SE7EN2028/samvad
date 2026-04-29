@@ -5,14 +5,29 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import "../auth.css";
 
+const DEMO_CREDS = { username: "demo_user", password: "demo123" };
+
 const LoginPage = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({ username: "", password: "" });
+    const [isDemoLogin, setIsDemoLogin] = useState(false);
     const { login, isLoggingIn } = useAuthStore();
 
     const handleSubmit = (e) => {
         e.preventDefault();
         login(formData);
+    };
+
+    const handleDemoLogin = () => {
+        setIsDemoLogin(true);
+        setShowPassword(false);
+        setFormData(DEMO_CREDS);
+        login(DEMO_CREDS);
+    };
+
+    const handleFieldChange = (field, value) => {
+        if (isDemoLogin) setIsDemoLogin(false);
+        setFormData({ ...formData, [field]: value });
     };
 
     return (
@@ -102,7 +117,7 @@ const LoginPage = () => {
                                     className="auth-input"
                                     placeholder="your_username"
                                     value={formData.username}
-                                    onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                                    onChange={(e) => handleFieldChange("username", e.target.value)}
                                     required
                                 />
                             </div>
@@ -113,20 +128,22 @@ const LoginPage = () => {
                             <div className="input-wrap">
                                 <div className="input-icon"><Lock size={18} /></div>
                                 <input
-                                    type={showPassword ? "text" : "password"}
-                                    className="auth-input has-toggle"
+                                    type={showPassword && !isDemoLogin ? "text" : "password"}
+                                    className={isDemoLogin ? "auth-input" : "auth-input has-toggle"}
                                     placeholder="••••••••"
                                     value={formData.password}
-                                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                    onChange={(e) => handleFieldChange("password", e.target.value)}
                                     required
                                 />
-                                <button
-                                    type="button"
-                                    className="toggle-btn"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                >
-                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                                </button>
+                                {!isDemoLogin && (
+                                    <button
+                                        type="button"
+                                        className="toggle-btn"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    >
+                                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                    </button>
+                                )}
                             </div>
                         </div>
 
@@ -148,6 +165,15 @@ const LoginPage = () => {
                     <div className="auth-footer">
                         Don&apos;t have an account?{" "}
                         <Link to="/signup">Create one</Link>
+                        {" · "}
+                        <button
+                            type="button"
+                            className="auth-link-btn"
+                            onClick={handleDemoLogin}
+                            disabled={isLoggingIn}
+                        >
+                            Try demo
+                        </button>
                     </div>
                 </div>
             </motion.div>

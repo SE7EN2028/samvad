@@ -11,6 +11,7 @@ import messageRoutes from "./routes/message.routes.js";
 import userRoutes from "./routes/user.routes.js";
 
 import connectDB from "./utils/db.js";
+import seedDemoUser from "./utils/seedDemoUser.js";
 import { app, server } from "./socket/socket.js";
 
 const PORT = process.env.PORT || 5005;
@@ -38,7 +39,8 @@ if (process.env.NODE_ENV === "production") {
     });
 }
 
-server.listen(PORT, () => {
-    connectDB();
+server.listen(PORT, async () => {
+    await connectDB();
+    await seedDemoUser();
     console.log(`Server Running on port ${PORT}`);
 });
