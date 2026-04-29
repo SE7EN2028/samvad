@@ -34,6 +34,21 @@ const ChatContainer = () => {
 
     const [editingId, setEditingId] = useState(null);
     const [editValue, setEditValue] = useState("");
+    const [lightboxImage, setLightboxImage] = useState(null);
+
+    useEffect(() => {
+        if (!lightboxImage) return;
+        const onKey = (e) => {
+            if (e.key === "Escape") setLightboxImage(null);
+        };
+        window.addEventListener("keydown", onKey);
+        const prevOverflow = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+        return () => {
+            window.removeEventListener("keydown", onKey);
+            document.body.style.overflow = prevOverflow;
+        };
+    }, [lightboxImage]);
 
     useEffect(() => {
         if (currentRoomId) {
@@ -142,7 +157,12 @@ const ChatContainer = () => {
 
                                     <div className={`msg-bubble ${isOwn ? "own" : "other"} ${isGrouped ? "msg-bubble-grouped" : ""}`}>
                                         {message.image && (
-                                            <img src={message.image} alt="Attachment" className="msg-image" />
+                                            <img
+                                                src={message.image}
+                                                alt="Attachment"
+                                                className="msg-image"
+                                                onClick={() => setLightboxImage(message.image)}
+                                            />
                                         )}
                                         {message.audio && (
                                             <audio controls src={message.audio} className="msg-audio" />
@@ -225,6 +245,38 @@ const ChatContainer = () => {
             </AnimatePresence>
 
             <MessageInput />
+
+            <AnimatePresence>
+                {lightboxImage && (
+                    <motion.div
+                        className="image-lightbox"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.15 }}
+                        onClick={() => setLightboxImage(null)}
+                    >
+                        <button
+                            type="button"
+                            className="image-lightbox-close"
+                            onClick={() => setLightboxImage(null)}
+                            aria-label="Close"
+                        >
+                            <X size={22} />
+                        </button>
+                        <motion.img
+                            src={lightboxImage}
+                            alt="Full size"
+                            className="image-lightbox-img"
+                            initial={{ scale: 0.9 }}
+                            animate={{ scale: 1 }}
+                            exit={{ scale: 0.9 }}
+                            transition={{ duration: 0.18 }}
+                            onClick={(e) => e.stopPropagation()}
+                        />
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
