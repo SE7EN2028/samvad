@@ -9,7 +9,7 @@ const Navbar = () => {
         <header className="navbar">
             <Link to="/" className="navbar-brand">
                 <div className="navbar-logo">
-                    <MessageSquare size={16} strokeWidth={2.5} />
+                    <MessageSquare size={22} strokeWidth={2.4} />
                 </div>
                 <span className="navbar-title">Samvad</span>
             </Link>
