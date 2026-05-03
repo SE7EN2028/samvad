@@ -1329,20 +1329,20 @@ body::after {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background-color: #ef4444;
+  background-color: var(--error);
   animation: pulse-red 1.5s infinite;
 }
 
 @keyframes pulse-red {
-  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-  70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
-  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 180, 171, 0.6); }
+  70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(255, 180, 171, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 180, 171, 0); }
 }
 
 .recording-timer {
-  font-family: 'JetBrains Mono', 'SF Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 14px;
-  color: #fca5a5;
+  color: var(--error-light);
   font-weight: 500;
 }
 
@@ -1415,26 +1415,27 @@ body::after {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 10px;
-  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(208, 188, 255, 0.25);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .img-preview-remove {
   position: absolute;
   top: -6px;
   right: -6px;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  background: rgba(248, 113, 113, 0.9);
-  border: none;
-  color: white;
+  background: rgba(255, 180, 171, 0.95);
+  border: 2px solid var(--bg-surface);
+  color: var(--bg-dark);
   font-size: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform var(--transition-fast);
+  transition: all var(--transition-fast);
 }
 
 .img-preview-remove:hover {
@@ -1524,10 +1525,12 @@ body::after {
 }
 
 .sk-avatar {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.04);
+  background: linear-gradient(90deg, rgba(208, 188, 255, 0.04) 25%, rgba(93, 230, 255, 0.07) 50%, rgba(208, 188, 255, 0.04) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2.4s ease infinite;
   flex-shrink: 0;
 }
 
@@ -1539,11 +1542,12 @@ body::after {
 }
 
 .sk-bubble {
-  height: 38px;
-  border-radius: 14px;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.02) 25%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.02) 75%);
+  height: 42px;
+  border-radius: 22px;
+  background: linear-gradient(90deg, rgba(208, 188, 255, 0.04) 25%, rgba(93, 230, 255, 0.08) 50%, rgba(208, 188, 255, 0.04) 75%);
   background-size: 200% 100%;
-  animation: shimmer 2s ease infinite;
+  animation: shimmer 2.4s ease infinite;
+  border: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .empty-chat {
@@ -2080,52 +2084,63 @@ body::after {
 }
 
 .btn-icon-small {
-  width: 24px;
-  height: 24px;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   transition: all var(--transition-fast);
 }
 
 .btn-icon-small:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(93, 230, 255, 0.2);
+  border-color: rgba(93, 230, 255, 0.4);
 }
 
 .btn-icon-small.primary {
-  background: var(--primary);
+  background: var(--gradient-primary);
+  color: var(--primary-deep);
+  border: none;
+  box-shadow: 0 0 12px rgba(208, 188, 255, 0.3);
 }
 
 .btn-icon-small.primary:hover {
-  background: var(--primary-dark);
+  transform: scale(1.08);
+  box-shadow: 0 0 18px rgba(93, 230, 255, 0.4);
 }
 
 .btn-icon-danger:hover {
-  background: rgba(248, 113, 113, 0.25);
+  background: rgba(255, 180, 171, 0.2) !important;
+  border-color: rgba(255, 180, 171, 0.4) !important;
   color: var(--error);
 }
 
 .edit-textarea {
-  font-family: inherit;
+  font-family: var(--font-body);
   width: 100%;
-  min-height: 60px;
+  min-height: 64px;
   outline: none;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.25);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-sm);
-  padding: 8px;
+  padding: 10px 12px;
   color: inherit;
   font-size: 14px;
   resize: none;
+  transition: all var(--transition-base);
 }
 
 .edit-textarea:focus {
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: rgba(93, 230, 255, 0.5);
+  box-shadow: 0 0 0 3px rgba(93, 230, 255, 0.08);
+  background: rgba(0, 0, 0, 0.35);
 }
 
 .msg-edited-badge {

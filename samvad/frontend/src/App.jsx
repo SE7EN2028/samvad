@@ -47,7 +47,31 @@ const App = () => {
                 <Route path="/room/:roomId" element={authUser ? <RoomPage /> : <Navigate to="/login" />} />
                 <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
             </Routes>
-            <Toaster />
+            <Toaster
+                position="top-center"
+                toastOptions={{
+                    duration: 3000,
+                    style: {
+                        background: "rgba(21, 18, 27, 0.85)",
+                        color: "#ffffff",
+                        border: "1px solid rgba(255, 255, 255, 0.1)",
+                        backdropFilter: "blur(28px) saturate(1.4)",
+                        WebkitBackdropFilter: "blur(28px) saturate(1.4)",
+                        borderRadius: "9999px",
+                        padding: "10px 18px",
+                        fontSize: "13px",
+                        fontWeight: 500,
+                        fontFamily: "Inter, system-ui, sans-serif",
+                        boxShadow: "0 12px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06)",
+                    },
+                    success: {
+                        iconTheme: { primary: "#5de6ff", secondary: "#020617" },
+                    },
+                    error: {
+                        iconTheme: { primary: "#ffb4ab", secondary: "#020617" },
+                    },
+                }}
+            />
         </div>
     );
 };
