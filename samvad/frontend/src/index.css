@@ -1257,31 +1257,47 @@ body::after {
 }
 
 .chat-input-bar {
-  padding: 10px 14px;
+  padding: 14px 18px;
   border-top: 1px solid var(--glass-border);
-  background: rgba(3, 7, 18, 0.65);
+  background: rgba(15, 18, 27, 0.55);
+  backdrop-filter: blur(28px) saturate(1.4);
+  -webkit-backdrop-filter: blur(28px) saturate(1.4);
   flex-shrink: 0;
   position: relative;
 }
 
+.chat-input-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(208, 188, 255, 0.2), rgba(93, 230, 255, 0.18), transparent);
+}
+
 .chat-input-action {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  border: none;
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--text-muted);
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   transition: all var(--transition-base);
   flex-shrink: 0;
 }
 
 .chat-input-action:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--primary-light);
+  background: rgba(255, 255, 255, 0.09);
+  color: var(--accent);
+  border-color: rgba(93, 230, 255, 0.3);
+  box-shadow: 0 0 16px rgba(93, 230, 255, 0.2);
 }
 
 .recording-label {
@@ -1296,11 +1312,13 @@ body::after {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: rgba(239, 68, 68, 0.08);
-  border: 1px solid rgba(239, 68, 68, 0.15);
-  padding: 0 16px;
+  background: rgba(255, 180, 171, 0.08);
+  border: 1px solid rgba(255, 180, 171, 0.2);
+  padding: 0 18px;
   border-radius: var(--radius-full);
-  height: 42px;
+  height: 44px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .recording-pulse {
@@ -1325,23 +1343,27 @@ body::after {
 }
 
 .btn-mic {
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  border: none;
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--text-muted);
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   transition: all var(--transition-base);
   flex-shrink: 0;
 }
 
 .btn-mic:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.09);
+  color: var(--accent);
+  border-color: rgba(93, 230, 255, 0.3);
+  box-shadow: 0 0 16px rgba(93, 230, 255, 0.2);
 }
 
 .btn-mic-cancel {
@@ -1423,46 +1445,55 @@ body::after {
 
 .chat-input-field {
   flex: 1;
-  padding: 11px 16px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--glass-border);
-  border-radius: 100px;
+  padding: 14px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-full);
   color: var(--text-main);
   font-size: 14px;
-  font-family: inherit;
+  font-family: var(--font-body);
   outline: none;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   transition: all var(--transition-base);
 }
 
 .chat-input-field::placeholder {
-  color: var(--text-muted);
+  color: rgba(255, 255, 255, 0.3);
 }
 
 .chat-input-field:focus {
-  border-color: rgba(99, 102, 241, 0.35);
-  background: rgba(255, 255, 255, 0.06);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.06);
+  border-color: rgba(93, 230, 255, 0.5);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 4px rgba(93, 230, 255, 0.08), var(--shadow-glow-cyan);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .btn-send {
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
+  background: var(--gradient-primary);
   border: none;
-  color: white;
+  color: var(--primary-deep);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
   transition: all var(--transition-base);
-  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.25);
+  box-shadow:
+    var(--shadow-primary),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
 .btn-send:hover:not(:disabled) {
   transform: scale(1.08);
-  box-shadow: 0 6px 24px rgba(99, 102, 241, 0.35);
+  box-shadow:
+    var(--shadow-primary-lg),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 0 24px rgba(93, 230, 255, 0.4);
 }
 
 .btn-send:disabled {
@@ -1885,16 +1916,19 @@ body::after {
 
 .cmd-palette {
   position: absolute;
-  bottom: calc(100% + 6px);
-  left: 14px;
-  right: 14px;
-  background: rgba(10, 15, 30, 0.98);
-  border: 1px solid var(--glass-border);
+  bottom: calc(100% + 8px);
+  left: 18px;
+  right: 18px;
+  background: rgba(21, 18, 27, 0.85);
+  border: 1px solid var(--glass-border-hover);
   border-radius: var(--radius-md);
   overflow: hidden;
-  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+  box-shadow:
+    var(--shadow-lg),
+    inset 0 1px 0 var(--glass-inner-glow);
   z-index: 20;
-  backdrop-filter: blur(24px);
+  backdrop-filter: blur(40px) saturate(1.5);
+  -webkit-backdrop-filter: blur(40px) saturate(1.5);
 }
 
 .cmd-palette-header {
@@ -1921,7 +1955,7 @@ body::after {
 
 .cmd-item:hover,
 .cmd-item.active {
-  background: rgba(99, 102, 241, 0.08);
+  background: rgba(208, 188, 255, 0.1);
 }
 
 .cmd-emoji {
@@ -1946,8 +1980,8 @@ body::after {
 .cmd-name {
   font-size: 13px;
   font-weight: 600;
-  color: var(--primary-light);
-  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent);
+  font-family: var(--font-mono);
 }
 
 .cmd-desc {
@@ -1958,19 +1992,23 @@ body::after {
 
 .celebrate-toast {
   position: fixed;
-  top: 80px;
+  top: 84px;
   left: 50%;
   transform: translateX(-50%);
-  background: linear-gradient(135deg, var(--primary), var(--accent));
-  color: white;
-  padding: 10px 24px;
-  border-radius: 100px;
+  background: var(--gradient-primary);
+  color: var(--primary-deep);
+  padding: 12px 26px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.01em;
   z-index: 9998;
   animation: celebrate-toast-anim 3s ease forwards;
   white-space: nowrap;
-  box-shadow: 0 8px 32px rgba(99, 102, 241, 0.4);
+  box-shadow:
+    0 8px 32px rgba(208, 188, 255, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
 @keyframes celebrate-toast-anim {
