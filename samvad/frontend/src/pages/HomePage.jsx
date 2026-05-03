@@ -59,7 +59,7 @@ const HomePage = () => {
                             </div>
                         </div>
                         <div className="home-feature">
-                            <div className="home-feature-icon" style={{ background: 'rgba(139, 92, 246, 0.1)', color: '#a78bfa' }}>
+                            <div className="home-feature-icon" style={{ background: 'rgba(93, 230, 255, 0.12)', color: 'var(--accent)' }}>
                                 <Shield size={14} />
                             </div>
                             <div className="home-feature-text">
@@ -68,7 +68,7 @@ const HomePage = () => {
                             </div>
                         </div>
                         <div className="home-feature">
-                            <div className="home-feature-icon" style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#34d399' }}>
+                            <div className="home-feature-icon" style={{ background: 'rgba(162, 238, 255, 0.1)', color: 'var(--accent-light)' }}>
                                 <Users size={14} />
                             </div>
                             <div className="home-feature-text">
