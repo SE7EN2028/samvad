@@ -17,7 +17,7 @@ export const useChatStore = create((set, get) => ({
             const res = await axiosInstance.get(`/messages/${roomId}`);
             set({ messages: res.data });
         } catch (error) {
-            toast.error(error?.response?.data?.message || "Failed to load messages");
+            toast.error(error?.response?.data?.error || error?.response?.data?.message || "Failed to load messages");
         } finally {
             set({ isMessagesLoading: false });
         }
@@ -29,7 +29,7 @@ export const useChatStore = create((set, get) => ({
             const res = await axiosInstance.post(`/messages/send/${currentRoomId}`, messageData);
             set({ messages: [...messages, res.data] });
         } catch (error) {
-            toast.error(error?.response?.data?.message || "Failed to send message");
+            toast.error(error?.response?.data?.error || error?.response?.data?.message || "Failed to send message");
         }
     },
 
@@ -39,7 +39,7 @@ export const useChatStore = create((set, get) => ({
             await axiosInstance.delete(`/messages/delete/${messageId}`);
             set({ messages: messages.filter((m) => m._id !== messageId) });
         } catch (error) {
-            toast.error(error?.response?.data?.message || "Failed to delete message");
+            toast.error(error?.response?.data?.error || error?.response?.data?.message || "Failed to delete message");
         }
     },
 
@@ -51,7 +51,7 @@ export const useChatStore = create((set, get) => ({
                 messages: messages.map((m) => (m._id === messageId ? res.data : m)),
             });
         } catch (error) {
-            toast.error(error?.response?.data?.message || "Failed to edit message");
+            toast.error(error?.response?.data?.error || error?.response?.data?.message || "Failed to edit message");
         }
     },
 
@@ -87,14 +87,18 @@ export const useChatStore = create((set, get) => ({
             set({ roomUsers: users });
         });
 
-        socket.on("userTyping", ({ name, socketId }) => {
+        socket.on("userTyping", ({ name, socketId, userId }) => {
+            const myId = useAuthStore.getState().authUser?._id;
+            if (userId && myId && userId === myId) return;
             const existing = get().typingUsers;
             if (!existing.find((u) => u.socketId === socketId)) {
-                set({ typingUsers: [...existing, { name, socketId }] });
+                set({ typingUsers: [...existing, { name, socketId, userId }] });
             }
         });
 
-        socket.on("userStopTyping", ({ socketId }) => {
+        socket.on("userStopTyping", ({ socketId, userId }) => {
+            const myId = useAuthStore.getState().authUser?._id;
+            if (userId && myId && userId === myId) return;
             set({ typingUsers: get().typingUsers.filter((u) => u.socketId !== socketId) });
         });
 

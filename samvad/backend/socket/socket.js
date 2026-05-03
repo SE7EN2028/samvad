@@ -46,11 +46,11 @@ io.on("connection", (socket) => {
     });
 
     socket.on("typing", ({ roomId, name }) => {
-        socket.to(roomId).emit("userTyping", { name, socketId: socket.id });
+        socket.to(roomId).emit("userTyping", { name, socketId: socket.id, userId });
     });
 
     socket.on("stopTyping", ({ roomId }) => {
-        socket.to(roomId).emit("userStopTyping", { socketId: socket.id });
+        socket.to(roomId).emit("userStopTyping", { socketId: socket.id, userId });
     });
 
     socket.on("roomAction", ({ roomId, name, action }) => {

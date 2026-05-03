@@ -36,6 +36,7 @@ export const getMessages = async (req, res) => {
 
         const messages = await Message.find({ roomId })
             .sort({ createdAt: 1 })
+            .allowDiskUse(true)
             .populate("senderId", "fullName profilePic username");
 
         res.status(200).json(messages);
