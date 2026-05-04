@@ -21,18 +21,19 @@ const App = () => {
 
     if (isCheckingAuth && !authUser)
         return (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#030712' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: 'linear-gradient(180deg, #020617 0%, #0f172a 50%, #15121b 100%)' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
                     <div style={{
-                        width: '44px', height: '44px',
-                        background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-                        borderRadius: '12px',
+                        width: '48px', height: '48px',
+                        background: 'linear-gradient(135deg, #d0bcff, #5de6ff)',
+                        borderRadius: '14px',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        animation: 'pulse-dot 1.5s ease infinite'
+                        animation: 'pulse-dot 1.5s ease infinite',
+                        boxShadow: '0 0 32px rgba(208, 188, 255, 0.4)'
                     }}>
-                        <MessageSquare size={20} color="white" />
+                        <MessageSquare size={22} color="#5516be" strokeWidth={2.4} />
                     </div>
-                    <Loader style={{ width: 20, height: 20, animation: 'spin 1s linear infinite', color: '#6366f1' }} />
+                    <Loader style={{ width: 20, height: 20, animation: 'spin 1s linear infinite', color: '#5de6ff' }} />
                 </div>
             </div>
         );

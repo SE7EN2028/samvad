@@ -1,4 +1,4 @@
-const COLORS = ["#6366f1", "#8b5cf6", "#ec4899", "#f59e0b", "#10b981", "#3b82f6", "#f87171", "#34d399", "#fbbf24"];
+const COLORS = ["#d0bcff", "#5de6ff", "#a2eeff", "#e9ddff", "#a078ff", "#2fd9f4", "#ec4899", "#fbbf24"];
 const SHAPES = ["circle", "square", "ribbon"];
 
 export function launchConfetti() {
