@@ -153,8 +153,4 @@ If this helps anyone understand how real-time chat works, awesome. If you just w
 
 ---
 
-Built by Ritik Anand.
-
-Questions? Found a bug? Realized I'm a mess? Open an issue or something.
-
 Have fun breaking things.
